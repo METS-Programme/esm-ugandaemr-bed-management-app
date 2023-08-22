@@ -1,0 +1,41 @@
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.heading {
+  @include type.type-style('heading-03');
+}
+
+.subheading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.explainer {
+  @include type.type-style('body-long-01');
+  margin: 1rem 0;
+}
+
+.section {
+  margin-top: 2rem;
+  max-width: 40rem;
+
+  p {
+    @include type.type-style('heading-02');
+  }
+}
+
+.list {
+  margin-top: 2rem;
+
+  > * + * {
+    margin-top: spacing.$spacing-04;
+  }
+}
