@@ -75,7 +75,11 @@ const BedLocation: React.FC = () => {
   return (
     <>
       <BedManagementHeader route={name ? name : "--"} />
-      {isLoading && <DataTableSkeleton role="progressbar" zebra />}
+      {isLoading && (
+        <div className={styles.container}>
+          <DataTableSkeleton role="progressbar" zebra />
+        </div>
+      )}
 
       {bedData?.length ? (
         <div className={styles.container}>

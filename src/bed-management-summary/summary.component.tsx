@@ -5,13 +5,14 @@ import { getBedsForLocation, useLocationsByTag } from "./summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
 import { useTranslation } from "react-i18next";
 import { ConfigurableLink } from "@openmrs/esm-framework";
+import BedAdministration from "../bed-administration/bed-administration-table.component";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
 
 const BedManagementSummary: React.FC = () => {
   const { t } = useTranslation();
 
-  const [bedsForLocation, setBedsForLocation] = React.useState([]);
+  const [bedsForLocation, setBedsForLocation] = useState([]);
   const [isLoadingBedData, setIsLoadingBedData] = useState(true);
   const { data, isLoading } = useLocationsByTag(LOCATION_TAG_UUID);
 
@@ -77,6 +78,7 @@ const BedManagementSummary: React.FC = () => {
             );
           })}
         </div>
+        <BedAdministration />
       </div>
     );
   }

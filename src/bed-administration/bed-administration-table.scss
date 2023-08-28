@@ -1,0 +1,10 @@
+@import '~@openmrs/esm-styleguide/src/vars';
+@import '../root.scss';
+
+.widgetCard {
+  border: 1px solid $ui-03;
+}
+
+.flippedOverflowMenu {
+  background-color: inherit;
+}
