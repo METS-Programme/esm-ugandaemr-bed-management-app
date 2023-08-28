@@ -6,8 +6,21 @@
   },
   "pages": [
     {
-      "component": "root",
-      "route": "root"
+      "component": "bedManagement",
+      "route": "bed-management"
+      
+    }
+  ],
+  "extensions": [
+    {
+      "name": "bed-management-admin-card-link",
+      "slot": "system-admin-page-card-link-slot",
+      "component": "bedManagementAdminCardLink"
+    },
+    {
+      "name": "bed-management-dashboard",
+      "slot": "bed-management-dashboard-slot",
+      "component": "bedManagementDashboard"
     }
   ]
 }
