@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { ConfigurableLink } from "@openmrs/esm-framework";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
+import BedWardAllocation from "../bed-ward-allocation/bed-ward-allocation-table";
 
 const BedManagementSummary: React.FC = () => {
   const { t } = useTranslation();
