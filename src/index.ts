@@ -2,6 +2,7 @@ import {
   getAsyncLifecycle,
   defineConfigSchema,
   getSyncLifecycle,
+  registerBreadcrumbs,
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createDashboardLink } from "./create-dashboard-link.component";
@@ -14,7 +15,7 @@ const options = {
 };
 
 export const importTranslation = require.context(
-  "../translations",
+  "./translations",
   false,
   /.json$/,
   "lazy"
@@ -22,6 +23,12 @@ export const importTranslation = require.context(
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
+  registerBreadcrumbs([
+    {
+      path: `${window.spaBase}/bedmanagement`,
+      title: "Bed Management"
+    },
+  ])
 }
 
 export const root = getAsyncLifecycle(
