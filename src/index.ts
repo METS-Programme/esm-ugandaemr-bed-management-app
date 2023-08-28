@@ -26,9 +26,9 @@ export function startupApp() {
   registerBreadcrumbs([
     {
       path: `${window.spaBase}/bedmanagement`,
-      title: "Bed Management"
+      title: "Bed Management",
     },
-  ])
+  ]);
 }
 
 export const root = getAsyncLifecycle(

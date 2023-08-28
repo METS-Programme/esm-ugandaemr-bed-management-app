@@ -15,7 +15,9 @@ export default function BedManagementNavLink({
     <div key={page}>
       <ConfigurableLink
         to={
-          "${openmrsSpaBase}/" + "routes.offlineToolsl" + (page ? `/${page}` : "")
+          "${openmrsSpaBase}/" +
+          "routes.offlineToolsl" +
+          (page ? `/${page}` : "")
         }
         className="cds--side-nav__link"
       >
