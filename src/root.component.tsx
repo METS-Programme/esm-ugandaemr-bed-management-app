@@ -1,12 +1,8 @@
 import React from "react";
-import styles from "./root.scss";
+import { ExtensionSlot } from "@openmrs/esm-framework";
 
-const Root: React.FC = () => {
-  return (
-    <div className={styles.container}>
-      <h4>Bed management</h4>
-    </div>
-  );
+const BedManagement: React.FC = () => {
+  return <ExtensionSlot name="bed-management-dashboard-slot" />;
 };
 
-export default Root;
+export default BedManagement;
