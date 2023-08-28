@@ -41,7 +41,7 @@ const BedManagementSummary: React.FC = () => {
 
       fetchData();
     }
-  }, [data, isLoading]);
+  }, [isLoading]);
 
   if (isLoadingBedData) {
     return (

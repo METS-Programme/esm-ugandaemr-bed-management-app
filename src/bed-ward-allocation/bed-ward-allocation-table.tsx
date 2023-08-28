@@ -7,127 +7,156 @@ import {
   useConfig,
   useLayoutType,
   isDesktop as desktopLayout,
-} from '@openmrs/esm-framework';
-import { findBedByLocation, useWards } from "../bed-management-summary/summary.resource";
+} from "@openmrs/esm-framework";
+import {
+  findBedByLocation,
+  useWards,
+} from "../bed-management-summary/summary.resource";
 import { LOCATION_UUID } from "../constants";
-import { CardHeader, EmptyState, ErrorState } from "@openmrs/esm-patient-common-lib";
-import { DataTable, TableContainer, DataTableSkeleton, TableBody, TableCell, TableHeader, TableRow, InlineLoading, TableHead, Table } from "@carbon/react";
-import styles from './bed-ward-allocation-table.scss'
+import {
+  CardHeader,
+  EmptyState,
+  ErrorState,
+} from "@openmrs/esm-patient-common-lib";
+import {
+  DataTable,
+  TableContainer,
+  DataTableSkeleton,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+  InlineLoading,
+  TableHead,
+  Table,
+} from "@carbon/react";
+import styles from "./bed-ward-allocation-table.scss";
 import { Location } from "../types";
-
+import { Button } from "@carbon/react";
+import { Add } from "@carbon/react/icons";
 
 const BedWardAllocation: React.FC = () => {
   const { t } = useTranslation();
   // const config = useConfig() as ConfigObject;
-  const displayText = t('awardAllocation', 'Award Allocation');
-  const headerTitle = t('awardAllocation', 'Award Allocation');
+  const displayText = t("awardAllocation", "Award Allocation");
+  const headerTitle = t("awardAllocation", "Award Allocation");
   const layout = useLayoutType();
-  const isTablet = layout === 'tablet';
+  const isTablet = layout === "tablet";
   const isDesktop = desktopLayout(layout);
 
   const [wardsGroupedByLocations, setWardsGroupedByLocation] = useState(
     Array<Location>
   );
+  const [isBedDataLoading, setIsBedDataLoading] = useState(false);
 
   const { data, isLoading, isError, isValidating } = useWards(LOCATION_UUID);
 
   useEffect(() => {
     if (!isLoading && data) {
+      setIsBedDataLoading(true);
       const fetchData = async () => {
         const promises = data.data.results.map(async (ward) => {
-          try {
-            const bedData = await findBedByLocation(ward.uuid);
-            return {
-              ...ward,
-              beds: bedData.data.results,
-            };
-          } catch (error) {
-            return {
-              ...ward,
-              beds: [],
-            };
+          const bedLocations = await findBedByLocation(ward.uuid);
+          if (bedLocations.data.results.length) {
+            return bedLocations.data.results.map((bed) => ({
+              ...bed,
+              location: ward,
+            }));
           }
+          return null;
         });
 
-        const updatedWards = await Promise.all(promises);
+        const updatedWards = (await Promise.all(promises)).filter(Boolean);
         setWardsGroupedByLocation(updatedWards);
+        setIsBedDataLoading(false);
       };
-
       fetchData();
     }
-  }, [data, isLoading]);
+  }, [isLoading]);
 
-  let results = []
+  const bedsMappedToLocation = wardsGroupedByLocations?.length
+    ? [].concat(...wardsGroupedByLocations)
+    : [];
+
+  console.log("???????????? > ???????", bedsMappedToLocation);
+
+  let results = [];
 
   const tableHeaders = [
     {
-      key: 'display',
-      header: t('bedId', 'Bed ID'),
+      key: "bedNumber",
+      header: t("bedId", "Bed ID"),
     },
     {
-      key: 'location',
-      header: t('location', 'Location'),
+      key: "location",
+      header: t("location", "Location"),
     },
     {
-      key: 'occupationStatus',
-      header: t('occupationStatus', 'Occupation Status'),
+      key: "occupationStatus",
+      header: t("occupationStatus", "Occupation Status"),
     },
     {
-      key: 'currentStatus',
-      header: t('currentStatus', 'Current Status'),
+      key: "currentStatus",
+      header: t("currentStatus", "Current Status"),
     },
     {
-      key: 'actions',
-      header: t('actions', 'Actions'),
+      key: "actions",
+      header: t("actions", "Actions"),
     },
   ];
 
   if (!isLoading && data) {
-    results = data.data.results
+    results = data.data.results;
   }
 
   const tableRows = React.useMemo(() => {
-    return wardsGroupedByLocations.map((ward) => { 
-      console.log(">>>>>>>>>>>>>> wardsGroupedByLocations", ward);
-           
-      let status = '--';
+    return bedsMappedToLocation.map((ward) => {
       return {
         id: ward.uuid,
-        display: ward.display,
-        location: '--',
-        dateEnrolled: '--',
-        status,
+        bedNumber: ward.bedNumber,
+        location: ward.location.display,
+        currentStatus: ward.status,
+        occupationStatus: "--",
         actions: null,
       };
     });
-  }, [results, t]);
+  }, [bedsMappedToLocation, t]);
 
-  console.log("++++++ > >>", results);
-  
-  
-
-  if (isLoading) return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
+  if (isBedDataLoading || isLoading)
+    return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
   if (isError) return <ErrorState error={isError} headerTitle={headerTitle} />;
   if (tableRows.length) {
     return (
       <div className={styles.widgetCard}>
         <CardHeader title={headerTitle}>
-          <span>{isValidating ? <InlineLoading /> : null}</span>
+          <span>
+            {isValidating ? (
+              <InlineLoading />
+            ) : (
+              <Button
+                kind="ghost"
+                size="sm"
+                renderIcon={(props) => <Add size={16} {...props} />}
+              >
+                {t("addBed", "Add bed")}
+              </Button>
+            )}
+          </span>
         </CardHeader>
-        <DataTable rows={tableRows} headers={tableHeaders} isSortable size={isTablet ? 'lg' : 'sm'} useZebraStyles>
+        <DataTable
+          rows={tableRows}
+          headers={tableHeaders}
+          isSortable
+          size={isTablet ? "lg" : "sm"}
+          useZebraStyles
+        >
           {({ rows, headers, getHeaderProps, getTableProps }) => (
             <TableContainer>
               <Table {...getTableProps()}>
                 <TableHead>
                   <TableRow>
                     {headers.map((header) => (
-                      <TableHeader
-                        className={`${styles.productiveHeading01} ${styles.text02}`}
-                        {...getHeaderProps({
-                          header,
-                          isSortable: header.isSortable,
-                        })}
-                      >
+                      <TableHeader>
                         {header.header?.content ?? header.header}
                       </TableHeader>
                     ))}
@@ -137,7 +166,9 @@ const BedWardAllocation: React.FC = () => {
                   {rows.map((row) => (
                     <TableRow key={row.id}>
                       {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>{cell.value?.content ?? cell.value}</TableCell>
+                        <TableCell key={cell.id}>
+                          {cell.value?.content ?? cell.value}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))}
