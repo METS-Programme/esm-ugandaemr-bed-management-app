@@ -5193,9 +5193,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ugandaemr/esm-template-app@workspace:.":
+"@ugandaemr/esm-bed-management-app@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@ugandaemr/esm-template-app@workspace:."
+  resolution: "@ugandaemr/esm-bed-management-app@workspace:."
   dependencies:
     "@carbon/react": ^1.33.1
     "@openmrs/esm-framework": next

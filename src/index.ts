@@ -1,7 +1,7 @@
 import { getAsyncLifecycle, defineConfigSchema } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 
-const moduleName = "@ugandaemr/esm-template-app";
+const moduleName = "@ugandaemr/esm-bed-management-app";
 
 const options = {
   featureName: "root",
