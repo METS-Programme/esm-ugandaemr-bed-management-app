@@ -141,6 +141,7 @@ const BedAdminstration: React.FC = () => {
           <OverflowMenu flipped className={styles.flippedOverflowMenu}>
             {bedActions.map((actionItem, index) => (
               <OverflowMenuItem
+                key={`action-item-${index}`}
                 itemText={actionItem.label}
                 onClick={(e) => {
                   e.preventDefault();
@@ -151,11 +152,20 @@ const BedAdminstration: React.FC = () => {
         ),
       };
     });
-  }, [results, t]);
+  }, [bedActions, results]);
 
   if (isBedDataLoading || isLoading)
-    return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
-  if (isError) return <ErrorState error={isError} headerTitle={headerTitle} />;
+    return (
+      <div className={styles.widgetCard}>
+        <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
+      </div>
+    );
+  if (isError)
+    return (
+      <div className={styles.widgetCard}>
+        <ErrorState error={isError} headerTitle={headerTitle} />;
+      </div>
+    );
   if (tableRows.length) {
     return (
       <div className={styles.widgetCard}>
