@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ConfigObject,
@@ -7,6 +7,7 @@ import {
   useConfig,
   useLayoutType,
   isDesktop as desktopLayout,
+  usePagination,
 } from "@openmrs/esm-framework";
 import {
   findBedByLocation,
@@ -29,6 +30,7 @@ import {
   InlineLoading,
   TableHead,
   Table,
+  Pagination
 } from "@carbon/react";
 import styles from "./bed-ward-allocation-table.scss";
 import { Location } from "../types";
@@ -50,6 +52,14 @@ const BedWardAllocation: React.FC = () => {
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
 
   const { data, isLoading, isError, isValidating } = useWards(LOCATION_UUID);
+  const { results, currentPage, goTo } = usePagination(wardsGroupedByLocations ?? [], 20);
+
+  const pageSizes = useMemo(() => {
+    const numberOfPages = Math.ceil(wardsGroupedByLocations.length / 100);
+    return [...Array(numberOfPages).keys()].map((x) => {
+      return (x + 1) * 100;
+    });
+  }, [wardsGroupedByLocations]);
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -72,7 +82,7 @@ const BedWardAllocation: React.FC = () => {
       };
       fetchData();
     }
-  }, [isLoading]);
+  }, [[data], isLoading]);
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
@@ -80,7 +90,7 @@ const BedWardAllocation: React.FC = () => {
 
   console.log("???????????? > ???????", bedsMappedToLocation);
 
-  let results = [];
+  // let results = [];
 
   const tableHeaders = [
     {
@@ -105,9 +115,9 @@ const BedWardAllocation: React.FC = () => {
     },
   ];
 
-  if (!isLoading && data) {
-    results = data.data.results;
-  }
+  // if (!isLoading && data) {
+  //   results = data.data.results;
+  // }
 
   const tableRows = React.useMemo(() => {
     return bedsMappedToLocation.map((ward) => {
@@ -176,6 +186,16 @@ const BedWardAllocation: React.FC = () => {
               </Table>
             </TableContainer>
           )}
+          <Pagination
+            backwardText="Previous page"
+            forwardText="Next page"
+            page={currentPage}
+            pageNumberText="Page Number"
+            pageSize={100}
+            onChange={({ page }) => goTo(page)}
+            pageSizes={pageSizes?.length > 0 ? pageSizes : [100]}
+            totalItems={data.data?.results?.length ?? 0}
+          />
         </DataTable>
       </div>
     );
