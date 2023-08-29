@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ConfigObject,
-  formatDate,
-  formatDatetime,
-  useConfig,
   useLayoutType,
   isDesktop as desktopLayout,
   usePagination,
@@ -13,7 +9,7 @@ import {
   findBedByLocation,
   useWards,
 } from "../bed-management-summary/summary.resource";
-import { LOCATION_UUID } from "../constants";
+import { LOCATION_TAG_UUID } from "../constants";
 import {
   CardHeader,
   EmptyState,
@@ -30,16 +26,17 @@ import {
   InlineLoading,
   TableHead,
   Table,
-  Pagination
+  Pagination,
+  OverflowMenu,
+  OverflowMenuItem,
+  Button
 } from "@carbon/react";
-import styles from "./bed-ward-allocation-table.scss";
+import styles from "./bed-adminstration-table.scss";
 import { Location } from "../types";
-import { Button } from "@carbon/react";
 import { Add } from "@carbon/react/icons";
 
-const BedWardAllocation: React.FC = () => {
+const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
-  // const config = useConfig() as ConfigObject;
   const displayText = t("awardAllocation", "Award Allocation");
   const headerTitle = t("awardAllocation", "Award Allocation");
   const layout = useLayoutType();
@@ -51,15 +48,17 @@ const BedWardAllocation: React.FC = () => {
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
 
-  const { data, isLoading, isError, isValidating } = useWards(LOCATION_UUID);
-  const { results, currentPage, goTo } = usePagination(wardsGroupedByLocations ?? [], 20);
+  const bedsMappedToLocation = wardsGroupedByLocations?.length
+    ? [].concat(...wardsGroupedByLocations)
+    : [];
 
-  const pageSizes = useMemo(() => {
-    const numberOfPages = Math.ceil(wardsGroupedByLocations.length / 100);
-    return [...Array(numberOfPages).keys()].map((x) => {
-      return (x + 1) * 100;
-    });
-  }, [wardsGroupedByLocations]);
+  const { data, isLoading, isError, isValidating } = useWards(LOCATION_TAG_UUID);
+  const [currentPageSize, setPageSize] = useState(10);
+  const pageSizes = [10, 20, 30, 40, 50];
+  const { results, currentPage, totalPages, goTo } = usePagination(
+    bedsMappedToLocation ?? [],
+    currentPageSize
+  );
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -82,15 +81,7 @@ const BedWardAllocation: React.FC = () => {
       };
       fetchData();
     }
-  }, [[data], isLoading]);
-
-  const bedsMappedToLocation = wardsGroupedByLocations?.length
-    ? [].concat(...wardsGroupedByLocations)
-    : [];
-
-  console.log("???????????? > ???????", bedsMappedToLocation);
-
-  // let results = [];
+  }, [data, isLoading]);
 
   const tableHeaders = [
     {
@@ -115,22 +106,51 @@ const BedWardAllocation: React.FC = () => {
     },
   ];
 
-  // if (!isLoading && data) {
-  //   results = data.data.results;
-  // }
+  const bedActions = useMemo(
+    () => [
+      {
+        label: t("allocate", "Allocate"),
+        form: {
+          name: "bed-adminstration-form",
+        },
+        mode: "view",
+        intent: "*",
+      },
+      {
+        label: t("editBed", "Edit"),
+        form: {
+          name: "bed-adminstration-form",
+        },
+        mode: "view",
+        intent: "*",
+      },
+    ],
+    [t]
+  );
 
-  const tableRows = React.useMemo(() => {
-    return bedsMappedToLocation.map((ward) => {
+  const tableRows = useMemo(() => {
+    return results.map((ward) => {
       return {
         id: ward.uuid,
         bedNumber: ward.bedNumber,
         location: ward.location.display,
         currentStatus: ward.status,
         occupationStatus: "--",
-        actions: null,
+        actions: (
+          <OverflowMenu flipped className={styles.flippedOverflowMenu}>
+            {bedActions.map((actionItem, index) => (
+              <OverflowMenuItem
+                itemText={actionItem.label}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+              />
+            ))}
+          </OverflowMenu>
+        ),
       };
     });
-  }, [bedsMappedToLocation, t]);
+  }, [results, t]);
 
   if (isBedDataLoading || isLoading)
     return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
@@ -147,6 +167,9 @@ const BedWardAllocation: React.FC = () => {
                 kind="ghost"
                 size="sm"
                 renderIcon={(props) => <Add size={16} {...props} />}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
               >
                 {t("addBed", "Add bed")}
               </Button>
@@ -160,7 +183,7 @@ const BedWardAllocation: React.FC = () => {
           size={isTablet ? "lg" : "sm"}
           useZebraStyles
         >
-          {({ rows, headers, getHeaderProps, getTableProps }) => (
+          {({ rows, headers, getTableProps }) => (
             <TableContainer>
               <Table {...getTableProps()}>
                 <TableHead>
@@ -184,18 +207,25 @@ const BedWardAllocation: React.FC = () => {
                   ))}
                 </TableBody>
               </Table>
+              <Pagination
+                backwardText="Previous page"
+                forwardText="Next page"
+                page={currentPage}
+                pageNumberText="Page Number"
+                pageSize={totalPages}
+                pageSizes={pageSizes?.length > 0 ? pageSizes : [10]}
+                totalItems={bedsMappedToLocation.length ?? 0}
+                onChange={({ pageSize, page }) => {
+                  if (pageSize !== currentPageSize) {
+                    setPageSize(pageSize);
+                  }
+                  if (page !== currentPage) {
+                    goTo(page);
+                  }
+                }}
+              />
             </TableContainer>
           )}
-          <Pagination
-            backwardText="Previous page"
-            forwardText="Next page"
-            page={currentPage}
-            pageNumberText="Page Number"
-            pageSize={100}
-            onChange={({ page }) => goTo(page)}
-            pageSizes={pageSizes?.length > 0 ? pageSizes : [100]}
-            totalItems={data.data?.results?.length ?? 0}
-          />
         </DataTable>
       </div>
     );
@@ -203,4 +233,4 @@ const BedWardAllocation: React.FC = () => {
   return <EmptyState displayText={displayText} headerTitle={headerTitle} />;
 };
 
-export default BedWardAllocation;
+export default BedAdminstration;

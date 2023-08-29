@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { ConfigurableLink } from "@openmrs/esm-framework";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
-import BedWardAllocation from "../bed-ward-allocation/bed-ward-allocation-table";
+import BedAdminstration from "../bed-adminstration/bed-adminstration-table";
 
 const BedManagementSummary: React.FC = () => {
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ const BedManagementSummary: React.FC = () => {
 
       fetchData();
     }
-  }, [isLoading]);
+  }, [data, isLoading]);
 
   if (isLoadingBedData) {
     return (
