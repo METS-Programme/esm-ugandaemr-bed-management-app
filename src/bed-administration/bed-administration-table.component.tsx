@@ -10,11 +10,7 @@ import {
   useWards,
 } from "../bed-management-summary/summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
-import {
-  CardHeader,
-  EmptyState,
-  ErrorState,
-} from "@openmrs/esm-patient-common-lib";
+import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import {
   Button,
   DataTable,
@@ -38,7 +34,6 @@ import BedManagementHeader from "../bed-management-header/bed-management-header.
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
-  const displayText = t("awardAllocation", "Award Allocation");
   const headerTitle = t("awardAllocation", "Award Allocation");
   const layout = useLayoutType();
   const isTablet = layout === "tablet";
@@ -78,9 +73,9 @@ const BedAdminstration: React.FC = () => {
 
         const updatedWards = (await Promise.all(promises)).filter(Boolean);
         setWardsGroupedByLocation(updatedWards);
-        setIsBedDataLoading(false);
       };
       fetchData();
+      setIsBedDataLoading(false);
     }
   }, [data, isLoading]);
 
@@ -157,35 +152,34 @@ const BedAdminstration: React.FC = () => {
   return (
     <>
       <BedManagementHeader route={"Administration"} />
-      {/* {isBedDataLoading || isLoading ? (
+
+      {isLoading || isBedDataLoading ? (
         <div className={styles.widgetCard}>
           <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
         </div>
-      ) : null} */}
+      ) : null}
+
       {error ? (
         <div className={styles.widgetCard}>
           <ErrorState error={error} headerTitle={headerTitle} />
         </div>
       ) : null}
-      {tableRows?.length ? (
+
+      {results?.length ? (
         <div className={styles.widgetCard}>
           <CardHeader title={headerTitle}>
-            <span>
-              {isValidating ? (
-                <InlineLoading />
-              ) : (
-                <Button
-                  kind="ghost"
-                  size="sm"
-                  renderIcon={(props) => <Add size={16} {...props} />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  {t("addBed", "Add bed")}
-                </Button>
-              )}
-            </span>
+            <div className={styles.backgroundFetchingIndicator}>
+              <span>{isValidating ? <InlineLoading /> : null}</span>
+            </div>
+            <Button
+              kind="ghost"
+              renderIcon={(props) => <Add size={16} {...props} />}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
+              {t("addBed", "Add bed")}
+            </Button>
           </CardHeader>
           <DataTable
             rows={tableRows}

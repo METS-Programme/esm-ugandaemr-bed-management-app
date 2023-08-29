@@ -59,7 +59,7 @@ export const bedManagementDashboard = getAsyncLifecycle(
 
 export const homeDashboardLink = getSyncLifecycle(
   createDashboardLink({
-    name: "",
+    name: "home",
     title: "Home",
   }),
   options

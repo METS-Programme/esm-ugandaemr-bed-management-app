@@ -52,31 +52,29 @@ const BedManagementSummary: React.FC = () => {
 
   if (bedsForLocation?.length) {
     return (
-      <div className={styles.container}>
-        <div className={styles.cardContainer}>
-          {bedsForLocation.map((locationWithBeds) => {
-            const routeSegment = `${window.getOpenmrsSpaBase()}bed-management/beds/${
-              locationWithBeds.uuid
-            }`;
+      <div className={styles.cardContainer}>
+        {bedsForLocation.map((locationWithBeds) => {
+          const routeSegment = `${window.getOpenmrsSpaBase()}bed-management/location/${
+            locationWithBeds.uuid
+          }`;
 
-            return (
-              <WardCard
-                headerLabel={locationWithBeds.display}
-                label={t("beds", "Beds")}
-                value={locationWithBeds?.beds?.length}
-              >
-                {locationWithBeds?.beds?.length ? (
-                  <div className={styles.link}>
-                    <ConfigurableLink className={styles.link} to={routeSegment}>
-                      {t("viewBeds", "View beds")}
-                    </ConfigurableLink>
-                    <ArrowRight size={16} />
-                  </div>
-                ) : null}
-              </WardCard>
-            );
-          })}
-        </div>
+          return (
+            <WardCard
+              headerLabel={locationWithBeds.display}
+              label={t("beds", "Beds")}
+              value={locationWithBeds?.beds?.length}
+            >
+              {locationWithBeds?.beds?.length ? (
+                <div className={styles.link}>
+                  <ConfigurableLink className={styles.link} to={routeSegment}>
+                    {t("viewBeds", "View beds")}
+                  </ConfigurableLink>
+                  <ArrowRight size={16} />
+                </div>
+              ) : null}
+            </WardCard>
+          );
+        })}
       </div>
     );
   }

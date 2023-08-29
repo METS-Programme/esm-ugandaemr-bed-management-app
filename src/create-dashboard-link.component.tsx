@@ -17,18 +17,32 @@ function DashboardExtension({
   const { name, title } = dashboardLinkConfig;
   const location = useLocation();
 
-  const navLink = useMemo(
+  let navLink = useMemo(
     () => decodeURIComponent(last(location.pathname.split("/"))),
     [location.pathname]
   );
 
+  const isUUID = (value) => {
+    const regex =
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+    return regex.test(value);
+  };
+
+  if (isUUID(navLink)) {
+    navLink = "home";
+  }
+
   const activeClassName =
-    name === navLink ? "active-left-nav-link" : "non-active";
+    name === navLink || (isUUID(navLink) && name === "home")
+      ? "active-left-nav-link"
+      : "";
 
   return (
     <div className={activeClassName}>
       <ConfigurableLink
-        to={`${window.getOpenmrsSpaBase()}bed-management/${name}`}
+        to={`${window.getOpenmrsSpaBase()}bed-management${
+          name ? `/${name}` : ""
+        }`}
         className={`cds--side-nav__link ${
           name === navLink && "active-left-nav-link"
         }`}
