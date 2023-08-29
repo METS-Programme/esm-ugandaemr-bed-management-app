@@ -1,5 +1,9 @@
 import React from "react";
-import { formatDate, useSession } from "@openmrs/esm-framework";
+import {
+  ConfigurableLink,
+  formatDate,
+  useSession,
+} from "@openmrs/esm-framework";
 import { useTranslation } from "react-i18next";
 import { Calendar, Location } from "@carbon/react/icons";
 import Illustration from "./illo";
@@ -17,7 +21,9 @@ const BedManagementHeader: React.FC<BedManagementHeaderProps> = ({ route }) => {
   return (
     <div className={styles.header}>
       <div className={styles["left-justified-items"]}>
-        <Illustration />
+        <ConfigurableLink to={`${window.getOpenmrsSpaBase()}bed-management`}>
+          <Illustration />
+        </ConfigurableLink>
         <div className={styles["page-labels"]}>
           <p>{t("bedManagement", "Bed Management")}</p>
           <p className={styles["page-name"]}>{route}</p>

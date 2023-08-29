@@ -12,15 +12,16 @@ type MappedBedData = Array<{
 export const useLocationsByTag = (locationUuid: string) => {
   const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
 
-  const { data, error, isLoading, mutate } = useSWR<{ data }, Error>(
-    locationUuid ? locationsUrl : null,
-    openmrsFetch
-  );
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(locationUuid ? locationsUrl : null, openmrsFetch);
 
   return {
     data: data?.data?.results ?? [],
     error,
     isLoading,
+    isValidating,
     mutate,
   };
 };
@@ -69,5 +70,28 @@ export const useLocationName = (locationUuid: string) => {
   return {
     name: data?.data?.display ?? null,
     isLoadingLocationData: isLoading,
+  };
+};
+
+export const findBedByLocation = (locationUuid: string) => {
+  const locationsUrl = `/ws/rest/v1/bed?locationUuid=${locationUuid}`;
+  return openmrsFetch(locationsUrl, {
+    method: "GET",
+  });
+};
+
+export const useWards = (locationUuid: string) => {
+  const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(locationUuid ? locationsUrl : null, openmrsFetch);
+
+  return {
+    data,
+    isError: error,
+    isLoading,
+    isValidating,
+    mutateEnrollments: mutate,
   };
 };
