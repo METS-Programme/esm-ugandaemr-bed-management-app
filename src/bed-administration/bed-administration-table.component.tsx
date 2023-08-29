@@ -4,6 +4,7 @@ import {
   useLayoutType,
   isDesktop as desktopLayout,
   usePagination,
+  useLocations,
 } from "@openmrs/esm-framework";
 import {
   findBedByLocation,
@@ -12,25 +13,27 @@ import {
 import { LOCATION_TAG_UUID } from "../constants";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import {
-  Button,
   DataTable,
+  TableContainer,
   DataTableSkeleton,
-  InlineLoading,
-  OverflowMenu,
-  OverflowMenuItem,
-  Pagination,
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableHeader,
   TableRow,
+  InlineLoading,
+  TableHead,
+  Table,
+  Pagination,
+  OverflowMenu,
+  OverflowMenuItem,
+  Button,
 } from "@carbon/react";
-import { Location } from "../types";
 import { Add } from "@carbon/react/icons";
-import styles from "./bed-administration-table.scss";
+import { Location } from "../types";
+import { useBedType } from "./bed-administration.resource";
+import AddBedModal from "./bed-administration-form";
 import BedManagementHeader from "../bed-management-header/bed-management-header.component";
+import styles from "./bed-administration-table.scss";
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
@@ -43,6 +46,11 @@ const BedAdminstration: React.FC = () => {
     Array<Location>
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
+  const [showAddBedModal, setShowAddBedModal] = useState(false);
+
+  const { bedTypes } = useBedType();
+  const allLocations = useLocations();
+  const availableBedTypes = bedTypes ? bedTypes : [];
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
@@ -107,7 +115,7 @@ const BedAdminstration: React.FC = () => {
       {
         label: t("allocate", "Allocate"),
         form: {
-          name: "bed-adminstration-form",
+          name: "bed-administration-form",
         },
         mode: "view",
         intent: "*",
@@ -115,7 +123,7 @@ const BedAdminstration: React.FC = () => {
       {
         label: t("editBed", "Edit"),
         form: {
-          name: "bed-adminstration-form",
+          name: "bed-administration-form",
         },
         mode: "view",
         intent: "*",
@@ -134,9 +142,8 @@ const BedAdminstration: React.FC = () => {
         occupationStatus: "--",
         actions: (
           <OverflowMenu flipped className={styles.flippedOverflowMenu}>
-            {bedActions.map((actionItem, index) => (
+            {bedActions.map((actionItem) => (
               <OverflowMenuItem
-                key={`action-item-${index}`}
                 itemText={actionItem.label}
                 onClick={(e) => {
                   e.preventDefault();
@@ -147,7 +154,7 @@ const BedAdminstration: React.FC = () => {
         ),
       };
     });
-  }, [bedActions, results]);
+  }, [bedActions, results, t]);
 
   return (
     <>
@@ -167,6 +174,14 @@ const BedAdminstration: React.FC = () => {
 
       {results?.length ? (
         <div className={styles.widgetCard}>
+          {showAddBedModal ? (
+            <AddBedModal
+              onModalChange={setShowAddBedModal}
+              allLocations={allLocations}
+              availableBedTypes={availableBedTypes}
+              showModal={showAddBedModal}
+            />
+          ) : null}
           <CardHeader title={headerTitle}>
             <div className={styles.backgroundFetchingIndicator}>
               <span>{isValidating ? <InlineLoading /> : null}</span>

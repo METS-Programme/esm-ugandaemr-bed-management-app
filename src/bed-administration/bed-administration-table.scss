@@ -3,7 +3,6 @@
 
 .widgetCard {
   border: 1px solid $ui-03;
-  margin: 1.5rem;
 }
 
 .flippedOverflowMenu {
@@ -15,4 +14,8 @@
   display: flex;
   flex: 1 1 0%;
   justify-content: end;
+}
+
+.resources-dropdown {
+  width: inherit !important;
 }
