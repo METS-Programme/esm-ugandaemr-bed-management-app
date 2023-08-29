@@ -89,7 +89,7 @@ export const useWards = (locationUuid: string) => {
 
   return {
     data,
-    isError: error,
+    error,
     isLoading,
     isValidating,
     mutateEnrollments: mutate,

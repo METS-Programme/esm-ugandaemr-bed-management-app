@@ -34,6 +34,7 @@ import {
 import { Location } from "../types";
 import { Add } from "@carbon/react/icons";
 import styles from "./bed-administration-table.scss";
+import BedManagementHeader from "../bed-management-header/bed-management-header.component";
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
@@ -52,8 +53,7 @@ const BedAdminstration: React.FC = () => {
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
-  const { data, isLoading, isError, isValidating } =
-    useWards(LOCATION_TAG_UUID);
+  const { data, isLoading, error, isValidating } = useWards(LOCATION_TAG_UUID);
   const [currentPageSize, setPageSize] = useState(10);
   const pageSizes = [10, 20, 30, 40, 50];
   const { results, currentPage, totalPages, goTo } = usePagination(
@@ -154,94 +154,94 @@ const BedAdminstration: React.FC = () => {
     });
   }, [bedActions, results]);
 
-  if (isBedDataLoading || isLoading)
-    return (
-      <div className={styles.widgetCard}>
-        <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
-      </div>
-    );
-  if (isError)
-    return (
-      <div className={styles.widgetCard}>
-        <ErrorState error={isError} headerTitle={headerTitle} />;
-      </div>
-    );
-  if (tableRows.length) {
-    return (
-      <div className={styles.widgetCard}>
-        <CardHeader title={headerTitle}>
-          <span>
-            {isValidating ? (
-              <InlineLoading />
-            ) : (
-              <Button
-                kind="ghost"
-                size="sm"
-                renderIcon={(props) => <Add size={16} {...props} />}
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-              >
-                {t("addBed", "Add bed")}
-              </Button>
-            )}
-          </span>
-        </CardHeader>
-        <DataTable
-          rows={tableRows}
-          headers={tableHeaders}
-          isSortable
-          size={isTablet ? "lg" : "sm"}
-          useZebraStyles
-        >
-          {({ rows, headers, getTableProps }) => (
-            <TableContainer>
-              <Table {...getTableProps()}>
-                <TableHead>
-                  <TableRow>
-                    {headers.map((header) => (
-                      <TableHeader>
-                        {header.header?.content ?? header.header}
-                      </TableHeader>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>
-                          {cell.value?.content ?? cell.value}
-                        </TableCell>
+  return (
+    <>
+      <BedManagementHeader route={"Administration"} />
+      {/* {isBedDataLoading || isLoading ? (
+        <div className={styles.widgetCard}>
+          <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
+        </div>
+      ) : null} */}
+      {error ? (
+        <div className={styles.widgetCard}>
+          <ErrorState error={error} headerTitle={headerTitle} />
+        </div>
+      ) : null}
+      {tableRows?.length ? (
+        <div className={styles.widgetCard}>
+          <CardHeader title={headerTitle}>
+            <span>
+              {isValidating ? (
+                <InlineLoading />
+              ) : (
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  renderIcon={(props) => <Add size={16} {...props} />}
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  {t("addBed", "Add bed")}
+                </Button>
+              )}
+            </span>
+          </CardHeader>
+          <DataTable
+            rows={tableRows}
+            headers={tableHeaders}
+            isSortable
+            size={isTablet ? "lg" : "sm"}
+            useZebraStyles
+          >
+            {({ rows, headers, getTableProps }) => (
+              <TableContainer>
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      {headers.map((header) => (
+                        <TableHeader>
+                          {header.header?.content ?? header.header}
+                        </TableHeader>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Pagination
-                backwardText="Previous page"
-                forwardText="Next page"
-                page={currentPage}
-                pageNumberText="Page Number"
-                pageSize={totalPages}
-                pageSizes={pageSizes?.length > 0 ? pageSizes : [10]}
-                totalItems={bedsMappedToLocation.length ?? 0}
-                onChange={({ pageSize, page }) => {
-                  if (pageSize !== currentPageSize) {
-                    setPageSize(pageSize);
-                  }
-                  if (page !== currentPage) {
-                    goTo(page);
-                  }
-                }}
-              />
-            </TableContainer>
-          )}
-        </DataTable>
-      </div>
-    );
-  }
-  return <EmptyState displayText={displayText} headerTitle={headerTitle} />;
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>
+                            {cell.value?.content ?? cell.value}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <Pagination
+                  backwardText="Previous page"
+                  forwardText="Next page"
+                  page={currentPage}
+                  pageNumberText="Page Number"
+                  pageSize={totalPages}
+                  pageSizes={pageSizes?.length > 0 ? pageSizes : [10]}
+                  totalItems={bedsMappedToLocation.length ?? 0}
+                  onChange={({ pageSize, page }) => {
+                    if (pageSize !== currentPageSize) {
+                      setPageSize(pageSize);
+                    }
+                    if (page !== currentPage) {
+                      goTo(page);
+                    }
+                  }}
+                />
+              </TableContainer>
+            )}
+          </DataTable>
+        </div>
+      ) : null}
+    </>
+  );
 };
 
 export default BedAdminstration;

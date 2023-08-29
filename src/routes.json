@@ -17,9 +17,13 @@
       "component": "bedManagementAdminCardLink"
     },
     {
-      "component": "root",
-      "name": "bed-management-dashboard",
-      "slot": "bed-management-dashboard-slot"
+      "name": "home-page-dashboard-link", 
+      "slot": "bed-management-nav-menu-slot", "component": "homeDashboardLink"
+    },
+    {
+      "name": "bed-administration-dashboard-link",
+      "slot": "bed-management-nav-menu-slot",
+      "component": "bedAdministrationDashboardLink"
     }
   ]
 }

@@ -1,10 +1,12 @@
 import React, { useMemo } from "react";
+import last from "lodash-es/last";
 import { ConfigurableLink } from "@openmrs/esm-framework";
 import { BrowserRouter, useLocation } from "react-router-dom";
 
 export interface DashboardLinkConfig {
   name: string;
   title: string;
+  slot?: string;
 }
 
 function DashboardExtension({
@@ -14,23 +16,26 @@ function DashboardExtension({
 }) {
   const { name, title } = dashboardLinkConfig;
   const location = useLocation();
-  const spaBasePath = `${window.spaBase}/home`;
 
-  const navLink = useMemo(() => {
-    const pathArray = location.pathname.split("/home");
-    const lastElement = pathArray[pathArray.length - 1];
-    return decodeURIComponent(lastElement);
-  }, [location.pathname]);
+  const navLink = useMemo(
+    () => decodeURIComponent(last(location.pathname.split("/"))),
+    [location.pathname]
+  );
+
+  const activeClassName =
+    name === navLink ? "active-left-nav-link" : "non-active";
 
   return (
-    <ConfigurableLink
-      to={`${spaBasePath}/${name}`}
-      className={`cds--side-nav__link ${
-        navLink.match(name) && "active-left-nav-link"
-      }`}
-    >
-      {title}
-    </ConfigurableLink>
+    <div className={activeClassName}>
+      <ConfigurableLink
+        to={`${window.getOpenmrsSpaBase()}bed-management/${name}`}
+        className={`cds--side-nav__link ${
+          name === navLink && "active-left-nav-link"
+        }`}
+      >
+        {title}
+      </ConfigurableLink>
+    </div>
   );
 }
 

@@ -5,7 +5,6 @@ import {
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createDashboardLink } from "./create-dashboard-link.component";
-import { dashboardMeta } from "./dashboard.meta";
 
 const moduleName = "@ugandaemr/esm-bed-management-app";
 
@@ -35,22 +34,46 @@ export const bedLocation = getAsyncLifecycle(
   options
 );
 
+export const bedManagementNavItems = getAsyncLifecycle(
+  () => import("./side-nav/bed-management-nav-link.component"),
+  {
+    featureName: "bed-management-nav-items",
+    moduleName,
+  }
+);
+
 export const bedManagementAdminCardLink = getAsyncLifecycle(
   () => import("./bed-management-admin-card-link.component"),
   options
 );
 
-export const bedManagementSummary = getAsyncLifecycle(
-  () => import("./bed-management-summary/summary.component"),
-  options
-);
-
-export const bedHomeDashboardLink = getSyncLifecycle(
-  createDashboardLink({ ...dashboardMeta }),
+export const sideNavMenu = getAsyncLifecycle(
+  () => import("./side-nav/side-nav.component"),
   options
 );
 
 export const bedManagementDashboard = getAsyncLifecycle(
   () => import("./dashboard/bed-management-dashboard.component"),
+  options
+);
+
+export const homeDashboardLink = getSyncLifecycle(
+  createDashboardLink({
+    name: "",
+    title: "Home",
+  }),
+  options
+);
+
+export const bedAdministrationDashboardLink = getSyncLifecycle(
+  createDashboardLink({
+    name: "administration",
+    title: "Administration",
+  }),
+  options
+);
+
+export const bedManagementSummary = getAsyncLifecycle(
+  () => import("./bed-management-summary/summary.component"),
   options
 );

@@ -1,16 +1,22 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import BedManagementHeader from "../bed-management-header/bed-management-header.component";
-import BedManagementSummary from "../bed-management-summary/summary.component";
+import {
+  useLayoutType,
+  isDesktop,
+  ExtensionSlot,
+} from "@openmrs/esm-framework";
 import styles from "./bed-management-dashboard.scss";
 
 export default function BedManagementDashboard() {
-  const { t } = useTranslation();
+  const layout = useLayoutType();
 
   return (
-    <div className={styles.container}>
-      <BedManagementHeader route={t("home", "Home")} />
-      <BedManagementSummary />
-    </div>
+    <section className={isDesktop(layout) && styles.dashboardContainer}>
+      <>
+        {isDesktop(layout) && (
+          <ExtensionSlot name="bed-management-sidebar-slot" key={layout} />
+        )}
+        <ExtensionSlot name="bed-management-dashboard-slot" />
+      </>
+    </section>
   );
 }

@@ -12,14 +12,13 @@ import {
   TableBody,
   TableCell,
 } from "@carbon/react";
-
+import { usePagination } from "@openmrs/esm-framework";
 import {
   useBedsForLocation,
   useLocationName,
 } from "../bed-management-summary/summary.resource";
 import BedManagementHeader from "../bed-management-header/bed-management-header.component";
 import styles from "./bed-location.scss";
-import { usePagination } from "@openmrs/esm-framework";
 
 type RouteParams = { location: string };
 

@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import BedManagementDashboard from "./dashboard/bed-management-dashboard.component";
+import { setLeftNav, unsetLeftNav } from "@openmrs/esm-framework";
+import BedAdminstration from "./bed-administration/bed-administration-table.component";
 import BedLocation from "./bed-location/bed-location.component";
+import Home from "./home.component";
+import SideMenu from "./side-nav/side-nav.component";
 import styles from "./root.scss";
 
 const Root: React.FC = () => {
+  const spaBasePath = window.spaBase;
+
+  useEffect(() => {
+    setLeftNav({
+      name: "bed-management-nav-menu-slot",
+      basePath: spaBasePath,
+    });
+    return () => unsetLeftNav("bed-management-nav-menu-slot");
+  }, [spaBasePath]);
+
   return (
-    <main className={styles.container}>
-      <BrowserRouter basename={window.getOpenmrsSpaBase()}>
+    <BrowserRouter basename={`${window.getOpenmrsSpaBase()}bed-management`}>
+      <SideMenu />
+      <main className={styles.container}>
         <Routes>
-          <Route path="bed-management" element={<BedManagementDashboard />} />
-          <Route path="bed-management/:location" element={<BedLocation />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/beds/:location" element={<BedLocation />} />
+          <Route path="/administration" element={<BedAdminstration />} />
         </Routes>
-      </BrowserRouter>
-    </main>
+      </main>
+    </BrowserRouter>
   );
 };
 

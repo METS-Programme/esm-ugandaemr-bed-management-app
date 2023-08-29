@@ -5,3 +5,7 @@
   background-color: white;
   height: 100vh;
 }
+
+:global(.omrs-breakpoint-gt-tablet) .container {
+  margin-left: var(--omrs-sidenav-width);
+}

@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   attach,
   detach,
@@ -6,8 +7,7 @@ import {
   useLayoutType,
 } from "@openmrs/esm-framework";
 import { SideNav } from "@carbon/react";
-import React, { useEffect } from "react";
-import styles from "./desktop-side-nav.scss";
+import styles from "./side-nav.scss";
 
 const DesktopSideNav: React.FC = () => {
   const layout = useLayoutType();
@@ -19,11 +19,7 @@ const DesktopSideNav: React.FC = () => {
 
   return (
     isDesktop(layout) && (
-      <SideNav
-        expanded
-        aria-label="Bed management side menu"
-        className={styles.link}
-      >
+      <SideNav expanded aria-label="Menu" className={styles.sideNav}>
         <ExtensionSlot name="bed-management-nav-menu-slot" />
       </SideNav>
     )

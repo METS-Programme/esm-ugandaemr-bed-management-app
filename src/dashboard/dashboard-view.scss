@@ -1,0 +1,6 @@
+@use '@carbon/colors';
+
+.dashboardView {
+  background-color: colors.$white-0;
+  height: calc(100vh - 3rem);
+}
