@@ -10,7 +10,7 @@ import { dashboardMeta } from "./dashboard.meta";
 const moduleName = "@ugandaemr/esm-bed-management-app";
 
 const options = {
-  featureName: "esm-bed-management-app",
+  featureName: "bed-management",
   moduleName,
 };
 
@@ -25,8 +25,13 @@ export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
 }
 
-export const bedManagement = getAsyncLifecycle(
+export const root = getAsyncLifecycle(
   () => import("./root.component"),
+  options
+);
+
+export const bedLocation = getAsyncLifecycle(
+  () => import("./bed-location/bed-location.component"),
   options
 );
 

@@ -2,65 +2,73 @@
 @import '~@openmrs/esm-styleguide/src/vars';
 
 .cardContainer {
-    background-color: $ui-02;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 spacing.$spacing-05 spacing.$spacing-07 spacing.$spacing-03;
-    flex-flow: row wrap;
-    margin-top: -(spacing.$spacing-03);
-  }
+	background-color: $ui-02;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	justify-content: space-between;
+	padding: 2rem;
+}
 
 .container {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+	height: 100vh;
 }
 
 .buttonMain {
-    background-color: $ui-02;
-    color: #007d79;
-    cursor: text;
-
+	background-color: $ui-02;
+	color: #007d79;
+	cursor: text;
 }
 
 .sectionLoader {
-    text-align: center;
+	text-align: center;
 }
 
 .buttonMain:active, .buttonMain:focus, .buttonMain:hover {
-    color: #007d79 !important;
-    background-color: #fff !important;
+	color: #007d79 !important;
+	background-color: #fff !important;
 }
 
 .inactiveMain {
-    margin-bottom: 4rem;
+	margin-bottom: 4rem;
 }
-
-// .buttonMain :hover {
-//     background-color: $ui-02;
-// }
 
 .buttonContainer {
-    display: flex;
+	display: flex;
 }
+
 .buttonItems {
-    flex: auto;
+	flex: auto;
 }
 
 .pageHeaderContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: spacing.$spacing-05;
-  background-color: #ededed;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: spacing.$spacing-05;
+	background-color: #ededed;
 }
 
 .pageHeader {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 1.25rem;
-    font-weight: 400;
-    line-height: 1.4;
-    letter-spacing: 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0;
+}
+
+.link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: $interactive-01;
+
+  svg {
+    margin-left: spacing.$spacing-03;
+  }
+}
+
+.loader {
+	margin: 2rem;
 }

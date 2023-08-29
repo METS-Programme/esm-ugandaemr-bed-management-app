@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { InlineLoading } from "@carbon/react";
-import { findBedByLocation, useWards } from "./summary.resource";
+import { DataTableSkeleton } from "@carbon/react";
+import { ArrowRight } from "@carbon/react/icons";
+import { getBedsForLocation, useLocationsByTag } from "./summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
-import type { Location } from "../types";
-import ActiveBedSummary from "./active-beds.component";
-import Header from "./header.component";
-import InactiveBedSummary from "./inactive-beds.component";
+import { useTranslation } from "react-i18next";
+import { ConfigurableLink } from "@openmrs/esm-framework";
+import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
 
 const BedManagementSummary: React.FC = () => {
-  const [wardsGroupedByLocations, setWardsGroupedByLocation] = useState(
-    Array<Location>
-  );
+  const { t } = useTranslation();
 
-  const { data, isLoading } = useWards(LOCATION_TAG_UUID);
+  const [bedsForLocation, setBedsForLocation] = React.useState([]);
+  const [isLoadingBedData, setIsLoadingBedData] = useState(true);
+  const { data, isLoading } = useLocationsByTag(LOCATION_TAG_UUID);
+
   useEffect(() => {
     if (!isLoading && data) {
       const fetchData = async () => {
-        const promises = data.data.results.map(async (ward) => {
+        const promises = data.map(async (ward) => {
           try {
-            const bedData = await findBedByLocation(ward.uuid);
+            const bedData = await getBedsForLocation(ward.uuid);
             return {
               ...ward,
-              beds: bedData.data.results,
+              beds: bedData,
             };
           } catch (error) {
             return {
@@ -32,61 +33,53 @@ const BedManagementSummary: React.FC = () => {
           }
         });
 
-        const updatedWards = await Promise.all(promises);
-        setWardsGroupedByLocation(updatedWards);
+        const bedsForLocation = await Promise.all(promises);
+        setBedsForLocation(bedsForLocation);
+        setIsLoadingBedData(false);
       };
 
       fetchData();
     }
   }, [data, isLoading]);
 
-  const wardsWithBeds = wardsGroupedByLocations.filter(
-    (wards) => wards.beds.length > 0
-  );
-
-  let wardsWithRetiredBeds = [];
-
-  if (wardsWithBeds.length) {
-    wardsWithRetiredBeds = wardsWithBeds.map((ward) => ({
-      ...ward,
-      retiredBeds: ward.beds.filter((bed) => bed.status !== "AVAILABLE"),
-    }));
+  if (isLoadingBedData) {
+    return (
+      <div className={styles.loader}>
+        <DataTableSkeleton role="progressbar" zebra />
+      </div>
+    );
   }
 
-  return (
-    <div style={{ marginLeft: "16rem" }}>
-      <section className={styles.inactiveMain}>
-        <Header title="Active" />
-        <div className={styles.container}>
-          <div className={styles.section}>
-            {!wardsGroupedByLocations.length ? (
-              <span className={styles.sectionLoader}>
-                <InlineLoading />{" "}
-              </span>
-            ) : (
-              wardsGroupedByLocations.map((ward) => {
-                return <ActiveBedSummary ward={ward} />;
-              })
-            )}
-          </div>
+  if (bedsForLocation?.length) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.cardContainer}>
+          {bedsForLocation.map((locationWithBeds) => {
+            const routeSegment = `${window.getOpenmrsSpaBase()}bed-management/${
+              locationWithBeds.uuid
+            }`;
+
+            return (
+              <WardCard
+                headerLabel={locationWithBeds.display}
+                label={t("beds", "Beds")}
+                value={locationWithBeds?.beds?.length}
+              >
+                {locationWithBeds?.beds?.length ? (
+                  <div className={styles.link}>
+                    <ConfigurableLink className={styles.link} to={routeSegment}>
+                      {t("viewBeds", "View beds")}
+                    </ConfigurableLink>
+                    <ArrowRight size={16} />
+                  </div>
+                ) : null}
+              </WardCard>
+            );
+          })}
         </div>
-      </section>
-      <section>
-        <Header title="Inactive" />
-        <div className={styles.container}>
-          <div className={styles.section}>
-            {!wardsWithRetiredBeds.length ? (
-              <InlineLoading />
-            ) : (
-              wardsWithRetiredBeds.map((ward) => {
-                return <InactiveBedSummary ward={ward} />;
-              })
-            )}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+      </div>
+    );
+  }
 };
 
 export default BedManagementSummary;

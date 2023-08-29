@@ -5,7 +5,11 @@ import { Calendar, Location } from "@carbon/react/icons";
 import Illustration from "./illo";
 import styles from "./bed-management-header.scss";
 
-const BedManagementHeader: React.FC = () => {
+type BedManagementHeaderProps = {
+  route: string;
+};
+
+const BedManagementHeader: React.FC<BedManagementHeaderProps> = ({ route }) => {
   const { t } = useTranslation();
   const userSession = useSession();
   const userLocation = userSession?.sessionLocation?.display;
@@ -16,7 +20,7 @@ const BedManagementHeader: React.FC = () => {
         <Illustration />
         <div className={styles["page-labels"]}>
           <p>{t("bedManagement", "Bed Management")}</p>
-          <p className={styles["page-name"]}>{t("home", "Home")}</p>
+          <p className={styles["page-name"]}>{route}</p>
         </div>
       </div>
       <div className={styles["right-justified-items"]}>

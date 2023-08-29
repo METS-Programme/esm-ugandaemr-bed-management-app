@@ -11,6 +11,7 @@
   display: flex;
   padding-left: 8px;
   justify-content: space-between;
+  border-bottom: 1px solid colors.$gray-20;
 }
 
 .left-justified-items {
@@ -24,6 +25,7 @@
   @include type.type-style('body-compact-02');
   color: colors.$gray-70;
   margin: 0.5rem;
+  padding-top: 1rem;
 }
 
 .page-name {

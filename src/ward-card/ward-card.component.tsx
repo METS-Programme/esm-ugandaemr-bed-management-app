@@ -26,8 +26,8 @@ const WardCard: React.FC<WardCardProps> = ({
         <div className={styles.tileHeader}>
           <div className={styles.headerLabelContainer}>
             <label className={styles.headerLabel}>{headerLabel}</label>
-            {children}
           </div>
+          {children}
         </div>
         <div>
           <label className={styles.totalsLabel}>{label}</label>

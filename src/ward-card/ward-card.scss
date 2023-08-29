@@ -6,14 +6,6 @@
   flex-grow: 1;
 }
 
-/* Tablet viewport */
-:global(.omrs-breakpoint-lt-desktop) {
-  // The card containing the dropdown element should be the first to overflow on tablet
-  .cardWithChildren {
-    order: 3;
-  }
-}
-
 .tileContainer {
   border: 0.0625rem solid $ui-03;
   height: 7.875rem;
@@ -44,17 +36,7 @@
 }
 
 .headerLabelContainer {
-  display: flex;
-  height: spacing.$spacing-07;
-
-  :global(.cds--dropdown__wrapper--inline) {
-    gap: 0;
-    margin-top: -0.75rem;
-  }
-
-  :global(.cds--list-box__menu-icon) {
-    height: 1rem;
-  }
+  margin-bottom: 1rem;
 }
 
 .link {
