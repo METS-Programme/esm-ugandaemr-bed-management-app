@@ -4,6 +4,7 @@ import {
   useLayoutType,
   isDesktop as desktopLayout,
   usePagination,
+  useLocations,
 } from "@openmrs/esm-framework";
 import {
   findBedByLocation,
@@ -29,11 +30,13 @@ import {
   Pagination,
   OverflowMenu,
   OverflowMenuItem,
-  Button
+  Button,
 } from "@carbon/react";
 import styles from "./bed-adminstration-table.scss";
 import { Location } from "../types";
 import { Add } from "@carbon/react/icons";
+import AddBedModal from "./bed-adminstration-form";
+import { useBedType } from "./bed-adminstration.resource";
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
@@ -47,12 +50,18 @@ const BedAdminstration: React.FC = () => {
     Array<Location>
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
+  const [showAddBedModal, setShowAddBedModal] = useState(false);
+
+  const { bedTypes } = useBedType();
+  const allLocations = useLocations();
+  const availableBedTypes = bedTypes ? bedTypes : [];
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
-  const { data, isLoading, isError, isValidating } = useWards(LOCATION_TAG_UUID);
+  const { data, isLoading, isError, isValidating } =
+    useWards(LOCATION_TAG_UUID);
   const [currentPageSize, setPageSize] = useState(10);
   const pageSizes = [10, 20, 30, 40, 50];
   const { results, currentPage, totalPages, goTo } = usePagination(
@@ -81,7 +90,7 @@ const BedAdminstration: React.FC = () => {
       };
       fetchData();
     }
-  }, [data, isLoading]);
+  }, [isLoading]);
 
   const tableHeaders = [
     {
@@ -158,6 +167,14 @@ const BedAdminstration: React.FC = () => {
   if (tableRows.length) {
     return (
       <div className={styles.widgetCard}>
+        {showAddBedModal ? (
+          <AddBedModal
+            onModalChange={setShowAddBedModal}
+            allLocations={allLocations}
+            availableBedTypes={availableBedTypes}
+            showModal={showAddBedModal}
+          />
+        ) : null}
         <CardHeader title={headerTitle}>
           <span>
             {isValidating ? (
@@ -169,6 +186,7 @@ const BedAdminstration: React.FC = () => {
                 renderIcon={(props) => <Add size={16} {...props} />}
                 onClick={(e) => {
                   e.preventDefault();
+                  setShowAddBedModal(true);
                 }}
               >
                 {t("addBed", "Add bed")}
