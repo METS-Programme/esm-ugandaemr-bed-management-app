@@ -6,21 +6,26 @@
   margin: 1.5rem;
 }
 
-.flippedOverflowMenu {
-  background-color: inherit;
-}
-
-.backgroundDataFetchingIndicator {
-  align-items: center;
-  display: flex;
-  flex: 1 1 0%;
-  justify-content: end;
-}
-
-.resources-dropdown {
-  width: inherit !important;
-}
-
 .form {
   display: grid;
+}
+
+.flexContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  margin-top: 2rem;
+  margin-left: 0.5rem;
+}
+
+.filterContainer {
+  flex: 1;
+
+  :global(.cds--dropdown__wrapper--inline) {
+    gap: 0;
+  }
+
+  :global(.cds--list-box__menu-icon) {
+    height: 1rem;
+  }
 }

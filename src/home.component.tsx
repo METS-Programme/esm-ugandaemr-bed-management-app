@@ -6,7 +6,7 @@ import styles from "./home.scss";
 const Home: React.FC = () => {
   return (
     <section className={styles.section}>
-      <Header route="Home" />
+      <Header route="Summary" />
       <BedManagementSummary />
     </section>
   );

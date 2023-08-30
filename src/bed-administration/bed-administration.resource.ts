@@ -33,3 +33,18 @@ export function useBedType() {
   );
   return { bedTypes: bedTypes ? bedTypes : [], isLoading, error };
 }
+
+export async function editBed({
+  bedObject,
+  bedId,
+}): Promise<FetchResponse<BedForm>> {
+  const response: FetchResponse = await openmrsFetch(
+    `/ws/rest/v1/bed/${bedId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: bedObject,
+    }
+  );
+  return response;
+}

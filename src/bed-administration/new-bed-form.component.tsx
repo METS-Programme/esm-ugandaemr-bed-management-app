@@ -35,6 +35,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
     column: 0,
     location: {
       display: "",
+      uuid: "",
     },
     bedType: {
       name: "",

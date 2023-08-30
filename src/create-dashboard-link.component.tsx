@@ -29,11 +29,11 @@ function DashboardExtension({
   };
 
   if (isUUID(navLink)) {
-    navLink = "home";
+    navLink = "summary";
   }
 
   const activeClassName =
-    name === navLink || (isUUID(navLink) && name === "home")
+    name === navLink || (isUUID(navLink) && name === "summary")
       ? "active-left-nav-link"
       : "";
 

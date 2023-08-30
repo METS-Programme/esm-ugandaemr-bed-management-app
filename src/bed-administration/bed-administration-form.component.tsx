@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import {
   SelectItem,
   ModalHeader,
@@ -55,17 +55,14 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   );
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
-
-  const changebedNumber = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setBedIdLabel(event.target.value),
-    []
-  );
+  const [occupiedStatus, setOccupiedStatus] = useState(initialData.status);
 
   const filterLocationNames = (location) => {
-    return location.item.display
-      ?.toLowerCase()
-      .includes(location?.inputValue?.toLowerCase());
+    return (
+      location.item.display
+        ?.toLowerCase()
+        .includes(location?.inputValue?.toLowerCase()) ?? []
+    );
   };
 
   return (
@@ -85,10 +82,10 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
                 placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
                 invalidText={t(
                   "bedIdExists",
-                  "This bed ID already exists in your schema"
+                  "This bed  number has already been generated for this ward"
                 )}
-                value={bedLabel}
-                onChange={changebedNumber}
+                value={bedLabel ?? ""}
+                onChange={(event) => setBedIdLabel(event.target.value)}
                 required
               />
 
@@ -144,16 +141,19 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               />
 
               <Select
-                onChange={(event) => event.target.value}
+                onChange={(event) => setOccupiedStatus(event.target.value)}
                 id="occupiedStatus"
                 invalidText={t("typeRequired", "Type is required")}
                 labelText={t("occupiedStatus", "Occupied Status")}
+                value={occupiedStatus}
                 required
               >
                 {occupiedStatuses.map((element, key) => (
-                  <SelectItem text={element} value={element} key={key}>
-                    {t("occupiedStatus", `${element}`)}
-                  </SelectItem>
+                  <SelectItem
+                    text={t("occupiedStatus", `${element}`)}
+                    value={t("occupiedStatus", `${element}`)}
+                    key={key}
+                  />
                 ))}
               </Select>
 

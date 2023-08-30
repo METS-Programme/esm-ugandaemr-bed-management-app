@@ -37,15 +37,15 @@ export const adminCardLink = getAsyncLifecycle(
 export const adminDashboardLink = getSyncLifecycle(
   createDashboardLink({
     name: "administration",
-    title: "Administration",
+    title: "Ward Allocation",
   }),
   options
 );
 
 export const homeDashboardLink = getSyncLifecycle(
   createDashboardLink({
-    name: "home",
-    title: "Home",
+    name: "summary",
+    title: "Summary",
   }),
   options
 );
