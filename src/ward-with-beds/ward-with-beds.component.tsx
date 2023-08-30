@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
+  Button,
   DataTable,
   DataTableSkeleton,
   Pagination,
@@ -12,7 +13,8 @@ import {
   TableBody,
   TableCell,
 } from "@carbon/react";
-import { usePagination } from "@openmrs/esm-framework";
+import { ArrowLeft } from "@carbon/react/icons";
+import { navigate, usePagination } from "@openmrs/esm-framework";
 import {
   useBedsForLocation,
   useLocationName,
@@ -25,8 +27,7 @@ type RouteParams = { location: string };
 const WardWithBeds: React.FC = () => {
   const { location } = useParams<RouteParams>();
   const { isLoading, bedData } = useBedsForLocation(location);
-  console.log("bedData????", location, bedData);
-  
+
   const { name } = useLocationName(location);
 
   const [pageSize, setPageSize] = useState(10);
@@ -35,9 +36,6 @@ const WardWithBeds: React.FC = () => {
     goTo,
     currentPage,
   } = usePagination(bedData, pageSize);
-
-  // console.log("paginatedData", paginatedData);
-  
 
   if (isLoading) {
     <p>Loading...</p>;
@@ -87,59 +85,75 @@ const WardWithBeds: React.FC = () => {
       )}
 
       {bedData?.length ? (
-        <div className={styles.container}>
-          <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
-            {({
-              rows,
-              headers,
-              getHeaderProps,
-              getRowProps,
-              getTableProps,
-            }) => (
-              <TableContainer>
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow key={row.id} {...getRowProps({ row })}>
-                        {row.cells.map((cell) => (
-                          <TableCell key={cell.id}>
-                            {cell.value?.content ?? cell.value}
-                          </TableCell>
+        <>
+          <div className={styles.backButton}>
+            <Button
+              kind="ghost"
+              renderIcon={(props) => <ArrowLeft size={24} {...props} />}
+              iconDescription="Return home"
+              onClick={() =>
+                navigate({
+                  to: `${window.getOpenmrsSpaBase()}bed-management/home`,
+                })
+              }
+            >
+              <span>Return home</span>
+            </Button>
+          </div>
+          <div className={styles.container}>
+            <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
+              {({
+                rows,
+                headers,
+                getHeaderProps,
+                getRowProps,
+                getTableProps,
+              }) => (
+                <TableContainer>
+                  <Table {...getTableProps()}>
+                    <TableHead>
+                      <TableRow>
+                        {headers.map((header) => (
+                          <TableHeader
+                            key={header.key}
+                            {...getHeaderProps({ header })}
+                          >
+                            {header.header}
+                          </TableHeader>
                         ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-          <Pagination
-            backwardText="Previous page"
-            forwardText="Next page"
-            itemsPerPageText="Items per page:"
-            page={currentPage}
-            pageNumberText="Page Number"
-            pageSize={pageSize}
-            onChange={({ page, pageSize }) => {
-              goTo(page);
-              setPageSize(pageSize);
-            }}
-            pageSizes={[10, 20, 30, 40, 50]}
-            totalItems={paginatedData?.length}
-          />
-        </div>
+                    </TableHead>
+                    <TableBody>
+                      {rows.map((row) => (
+                        <TableRow key={row.id} {...getRowProps({ row })}>
+                          {row.cells.map((cell) => (
+                            <TableCell key={cell.id}>
+                              {cell.value?.content ?? cell.value}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </DataTable>
+            <Pagination
+              backwardText="Previous page"
+              forwardText="Next page"
+              itemsPerPageText="Items per page:"
+              page={currentPage}
+              pageNumberText="Page Number"
+              pageSize={pageSize}
+              onChange={({ page, pageSize }) => {
+                goTo(page);
+                setPageSize(pageSize);
+              }}
+              pageSizes={[10, 20, 30, 40, 50]}
+              totalItems={paginatedData?.length}
+            />
+          </div>
+        </>
       ) : null}
     </>
   );

@@ -6,6 +6,7 @@ import {
   showNotification,
 } from "@openmrs/esm-framework";
 
+import type { InitialData } from "../types";
 import { useBedType, saveBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
 
@@ -25,7 +26,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
   const allLocations = useLocations();
   const availableBedTypes = bedTypes ? bedTypes : [];
 
-  const initialData = {
+  const initialData: InitialData = {
     uuid: "",
     bedNumber: "",
     status: "",

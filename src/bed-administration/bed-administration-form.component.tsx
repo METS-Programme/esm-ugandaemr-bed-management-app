@@ -17,7 +17,7 @@ import {
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
-import type { BedType } from "../types";
+import type { BedType, InitialData } from "../types";
 import styles from "./bed-administration-table.scss";
 
 interface BedFormProps {
@@ -30,7 +30,7 @@ interface BedFormProps {
   ) => void;
   headerTitle: string;
   occupiedStatuses: string[];
-  initialData
+  initialData: InitialData;
 }
 
 const BedAdministrationForm: React.FC<BedFormProps> = ({
@@ -46,12 +46,16 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   const { t } = useTranslation();
 
   const [bedLabel, setBedIdLabel] = useState(initialData.bedNumber);
-  const [descriptionLabel, setDescriptionLabel] = useState(initialData.description);
+  const [descriptionLabel, setDescriptionLabel] = useState(
+    initialData.description
+  );
   const [selectedLocationId, setSelectedLocationId] = useState("");
-  const [selectedLocationName, setSelectedLocationName] = useState(initialData.location.display);
+  const [selectedLocationName, setSelectedLocationName] = useState(
+    initialData.location.display
+  );
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
-  
+
   const changebedNumber = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) =>
       setBedIdLabel(event.target.value),
@@ -125,8 +129,8 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
                 shouldFilterItem={filterLocationNames}
                 items={allLocations}
                 onChange={({ selectedItem }) => {
-                  setSelectedLocationId(selectedItem?.uuid)
-                  setSelectedLocationName(selectedItem?.display)
+                  setSelectedLocationId(selectedItem?.uuid);
+                  setSelectedLocationName(selectedItem?.display);
                 }}
                 selectedItem={allLocations?.find(
                   (location) => location?.uuid === selectedLocationId

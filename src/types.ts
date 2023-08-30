@@ -66,7 +66,7 @@ export type Location = {
   beds: Bed[];
 };
 
-export type Bed = {
+export interface Bed {
   id: number;
   uuid: string;
   bedNumber: string;
@@ -80,11 +80,26 @@ export type Bed = {
   row: number;
   column: number;
   status: "AVAILABLE" | string;
-};
+}
 
 export interface BedType {
   uuid: string;
   name: string;
   displayName: string;
   description: string;
+}
+
+export interface InitialData {
+  uuid: string;
+  bedNumber: string;
+  status: string;
+  description: string;
+  row: number;
+  column: number;
+  location: {
+    display: string;
+  };
+  bedType: {
+    name: string;
+  };
 }

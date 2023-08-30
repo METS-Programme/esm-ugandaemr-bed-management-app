@@ -6,25 +6,14 @@ import {
   showNotification,
 } from "@openmrs/esm-framework";
 
+import type { InitialData } from "../types";
 import { useBedType, saveBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
-import { BedType } from "../types";
-
-interface editDataType {
-    id: number;
-    uuid: string;
-    bedNumber: string;
-    bedType: BedType;
-    row: number;
-    column: number;
-    status: string;
-    location: Location;
-  }
 
 interface NewBedFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
-  editData,
+  editData: InitialData;
 }
 
 const EditBedForm: React.FC<NewBedFormProps> = ({
