@@ -6,10 +6,7 @@ import {
   usePagination,
   useLocations,
 } from "@openmrs/esm-framework";
-import {
-  findBedByLocation,
-  useWards,
-} from "../bed-management-summary/summary.resource";
+import { findBedByLocation, useWards } from "../summary/summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import {
@@ -31,8 +28,8 @@ import {
 import { Add } from "@carbon/react/icons";
 import { Location } from "../types";
 import { useBedType } from "./bed-administration.resource";
-import AddBedModal from "./bed-administration-form";
-import BedManagementHeader from "../bed-management-header/bed-management-header.component";
+import AddBedForm from "./bed-administration-form.component";
+import Header from "../header/header.component";
 import styles from "./bed-administration-table.scss";
 
 const BedAdminstration: React.FC = () => {
@@ -46,7 +43,7 @@ const BedAdminstration: React.FC = () => {
     Array<Location>
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
-  const [showAddBedModal, setShowAddBedModal] = useState(false);
+  const [showAddBedForm, setShowAddBedForm] = useState(false);
 
   const { bedTypes } = useBedType();
   const allLocations = useLocations();
@@ -82,8 +79,7 @@ const BedAdminstration: React.FC = () => {
         const updatedWards = (await Promise.all(promises)).filter(Boolean);
         setWardsGroupedByLocation(updatedWards);
       };
-      fetchData();
-      setIsBedDataLoading(false);
+      fetchData().finally(() => setIsBedDataLoading(false));
     }
   }, [data, isLoading]);
 
@@ -154,13 +150,13 @@ const BedAdminstration: React.FC = () => {
         ),
       };
     });
-  }, [bedActions, results, t]);
+  }, [bedActions, results]);
 
   return (
     <>
-      <BedManagementHeader route={"Administration"} />
+      <Header route={"Administration"} />
 
-      {isLoading || isBedDataLoading ? (
+      {isBedDataLoading ? (
         <div className={styles.widgetCard}>
           <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
         </div>
@@ -174,12 +170,12 @@ const BedAdminstration: React.FC = () => {
 
       {results?.length ? (
         <div className={styles.widgetCard}>
-          {showAddBedModal ? (
-            <AddBedModal
-              onModalChange={setShowAddBedModal}
+          {showAddBedForm ? (
+            <AddBedForm
+              onModalChange={setShowAddBedForm}
               allLocations={allLocations}
               availableBedTypes={availableBedTypes}
-              showModal={showAddBedModal}
+              showModal={showAddBedForm}
             />
           ) : null}
           <CardHeader title={headerTitle}>
@@ -189,9 +185,7 @@ const BedAdminstration: React.FC = () => {
             <Button
               kind="ghost"
               renderIcon={(props) => <Add size={16} {...props} />}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
+              onClick={() => setShowAddBedForm(true)}
             >
               {t("addBed", "Add bed")}
             </Button>

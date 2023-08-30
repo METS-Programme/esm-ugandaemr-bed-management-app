@@ -28,7 +28,7 @@ interface BedFormProps {
   allLocations: Location[];
 }
 
-const AddBedModal: React.FC<BedFormProps> = ({
+const AddBedForm: React.FC<BedFormProps> = ({
   showModal,
   onModalChange,
   availableBedTypes,
@@ -43,7 +43,7 @@ const AddBedModal: React.FC<BedFormProps> = ({
   const [bedRow, setBedRow] = useState(0);
   const [bedColumn, setBedColumn] = useState(0);
 
-  const changebedNumber = useCallback(
+  const changeBedNumber = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) =>
       setBedIdLabel(event.target.value),
     []
@@ -122,17 +122,17 @@ const AddBedModal: React.FC<BedFormProps> = ({
       <Form className={styles.form} onSubmit={handleCreateQuestion}>
         <ModalBody hasScrollingContent>
           <FormGroup legendText={""}>
-            <Stack gap={5}>
+            <Stack gap={7}>
               <TextInput
                 id="bedId"
-                labelText={t("bedId", "Bed Number")}
+                labelText={t("bedId", "Bed number")}
                 placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
                 invalidText={t(
                   "bedIdExists",
                   "This bed ID already exists in your schema"
                 )}
                 value={bedLabel}
-                onChange={changebedNumber}
+                onChange={changeBedNumber}
                 required
               />
 
@@ -146,7 +146,7 @@ const AddBedModal: React.FC<BedFormProps> = ({
                 placeholder={t("description", "Enter the bed description")}
               />
 
-              <div className={styles["input-container"]}>
+              <div className={styles.inputContainer}>
                 <NumberInput
                   id="bedRow"
                   invalidText="Bed row number is not valid"
@@ -179,7 +179,7 @@ const AddBedModal: React.FC<BedFormProps> = ({
                   (location) => location?.uuid === selectedLocation
                 )}
                 itemToString={(location) => location.display}
-                placeholder={t("selectBedLocation", "Select a bed Location")}
+                placeholder={t("selectBedLocation", "Select a bed location")}
                 titleText={t("bedLocation", "Locations")}
                 title={selectedLocation}
                 required
@@ -189,12 +189,12 @@ const AddBedModal: React.FC<BedFormProps> = ({
                 onChange={(event) => event.target.value}
                 id="occupiedStatus"
                 invalidText={t("typeRequired", "Type is required")}
-                labelText={t("occupiedStatus", "Occupied Status")}
+                labelText={t("occupancyStatus", "Occupancy status")}
                 required
               >
                 {occupiedStatuses.map((element, key) => (
                   <SelectItem text={element} value={element} key={key}>
-                    {t("occupiedStatus", `${element}`)}
+                    {t("occupancyStatus", `${element}`)}
                   </SelectItem>
                 ))}
               </Select>
@@ -203,7 +203,7 @@ const AddBedModal: React.FC<BedFormProps> = ({
                 onChange={(event) => event.target.value}
                 id="bedType"
                 invalidText={t("typeRequired", "Type is required")}
-                labelText={t("bedType", "Bed Type")}
+                labelText={t("bedType", "Bed type")}
                 required
               >
                 {availableBedTypes.map((element, key) => (
@@ -232,4 +232,4 @@ const AddBedModal: React.FC<BedFormProps> = ({
   );
 };
 
-export default AddBedModal;
+export default AddBedForm;

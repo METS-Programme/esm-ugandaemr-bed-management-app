@@ -2,7 +2,6 @@ import {
   getAsyncLifecycle,
   defineConfigSchema,
   getSyncLifecycle,
-  registerBreadcrumbs,
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createDashboardLink } from "./create-dashboard-link.component";
@@ -15,7 +14,7 @@ const options = {
 };
 
 export const importTranslation = require.context(
-  "./translations",
+  "../translations",
   false,
   /.json$/,
   "lazy"
@@ -23,12 +22,6 @@ export const importTranslation = require.context(
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
-  registerBreadcrumbs([
-    {
-      path: `${window.spaBase}/bedmanagement`,
-      title: "Bed Management",
-    },
-  ]);
 }
 
 export const root = getAsyncLifecycle(
@@ -36,31 +29,16 @@ export const root = getAsyncLifecycle(
   options
 );
 
-export const bedLocation = getAsyncLifecycle(
-  () => import("./bed-location/bed-location.component"),
+export const adminCardLink = getAsyncLifecycle(
+  () => import("./admin-card-link.component"),
   options
 );
 
-export const bedManagementNavItems = getAsyncLifecycle(
-  () => import("./side-nav/bed-management-nav-link.component"),
-  {
-    featureName: "bed-management-nav-items",
-    moduleName,
-  }
-);
-
-export const bedManagementAdminCardLink = getAsyncLifecycle(
-  () => import("./bed-management-admin-card-link.component"),
-  options
-);
-
-export const sideNavMenu = getAsyncLifecycle(
-  () => import("./side-nav/side-nav.component"),
-  options
-);
-
-export const bedManagementDashboard = getAsyncLifecycle(
-  () => import("./dashboard/bed-management-dashboard.component"),
+export const adminDashboardLink = getSyncLifecycle(
+  createDashboardLink({
+    name: "administration",
+    title: "Administration",
+  }),
   options
 );
 
@@ -69,18 +47,5 @@ export const homeDashboardLink = getSyncLifecycle(
     name: "home",
     title: "Home",
   }),
-  options
-);
-
-export const bedAdministrationDashboardLink = getSyncLifecycle(
-  createDashboardLink({
-    name: "administration",
-    title: "Administration",
-  }),
-  options
-);
-
-export const bedManagementSummary = getAsyncLifecycle(
-  () => import("./bed-management-summary/summary.component"),
   options
 );

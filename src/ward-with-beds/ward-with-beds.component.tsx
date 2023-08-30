@@ -16,13 +16,13 @@ import { usePagination } from "@openmrs/esm-framework";
 import {
   useBedsForLocation,
   useLocationName,
-} from "../bed-management-summary/summary.resource";
-import BedManagementHeader from "../bed-management-header/bed-management-header.component";
-import styles from "./bed-location.scss";
+} from "../summary/summary.resource";
+import Header from "../header/header.component";
+import styles from "./ward-with-beds.scss";
 
 type RouteParams = { location: string };
 
-const BedLocation: React.FC = () => {
+const WardWithBeds: React.FC = () => {
   const { location } = useParams<RouteParams>();
   const { isLoading, bedData } = useBedsForLocation(location);
   const { name } = useLocationName(location);
@@ -73,7 +73,7 @@ const BedLocation: React.FC = () => {
 
   return (
     <>
-      <BedManagementHeader route={name ? name : "--"} />
+      <Header route={name ? name : "--"} />
       {isLoading && (
         <div className={styles.container}>
           <DataTableSkeleton role="progressbar" zebra />
@@ -139,4 +139,4 @@ const BedLocation: React.FC = () => {
   );
 };
 
-export default BedLocation;
+export default WardWithBeds;
