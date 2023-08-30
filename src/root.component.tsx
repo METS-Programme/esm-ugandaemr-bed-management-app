@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { setLeftNav, unsetLeftNav } from "@openmrs/esm-framework";
-import BedAdminstration from "./bed-administration/bed-administration-table.component";
+import BedAdministration from "./bed-administration/bed-administration-table.component";
 import Home from "./home.component";
 import SideMenu from "./side-nav/side-nav.component";
 import WardWithBeds from "./ward-with-beds/ward-with-beds.component";
@@ -25,7 +25,7 @@ const Root: React.FC = () => {
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/location/:location" element={<WardWithBeds />} />
-          <Route path="/administration" element={<BedAdminstration />} />
+          <Route path="/administration" element={<BedAdministration />} />
         </Routes>
       </main>
     </BrowserRouter>

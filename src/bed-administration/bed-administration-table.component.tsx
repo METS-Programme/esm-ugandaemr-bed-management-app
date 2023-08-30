@@ -4,7 +4,6 @@ import {
   useLayoutType,
   isDesktop as desktopLayout,
   usePagination,
-  useLocations,
 } from "@openmrs/esm-framework";
 import { findBedByLocation, useWards } from "../summary/summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
@@ -26,9 +25,8 @@ import {
   Button,
 } from "@carbon/react";
 import { Add } from "@carbon/react/icons";
-import { Location } from "../types";
-import { useBedType } from "./bed-administration.resource";
-import AddBedForm from "./bed-administration-form.component";
+import type { Location } from "../types";
+import NewBedForm from "./new-bed-form.component";
 import Header from "../header/header.component";
 import styles from "./bed-administration-table.scss";
 
@@ -43,11 +41,7 @@ const BedAdminstration: React.FC = () => {
     Array<Location>
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
-  const [showAddBedForm, setShowAddBedForm] = useState(false);
-
-  const { bedTypes } = useBedType();
-  const allLocations = useLocations();
-  const availableBedTypes = bedTypes ? bedTypes : [];
+  const [showAddBedModal, setShowAddBedModal] = useState(false);
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
@@ -78,7 +72,9 @@ const BedAdminstration: React.FC = () => {
 
         const updatedWards = (await Promise.all(promises)).filter(Boolean);
         setWardsGroupedByLocation(updatedWards);
+        setIsBedDataLoading(false);
       };
+
       fetchData().finally(() => setIsBedDataLoading(false));
     }
   }, [data, isLoading]);
@@ -155,40 +151,38 @@ const BedAdminstration: React.FC = () => {
   return (
     <>
       <Header route={"Administration"} />
-
-      {isBedDataLoading ? (
+      {isBedDataLoading || isLoading ? (
         <div className={styles.widgetCard}>
           <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
         </div>
       ) : null}
-
       {error ? (
         <div className={styles.widgetCard}>
           <ErrorState error={error} headerTitle={headerTitle} />
         </div>
       ) : null}
-
-      {results?.length ? (
+      {tableRows?.length ? (
         <div className={styles.widgetCard}>
-          {showAddBedForm ? (
-            <AddBedForm
-              onModalChange={setShowAddBedForm}
-              allLocations={allLocations}
-              availableBedTypes={availableBedTypes}
-              showModal={showAddBedForm}
+          {showAddBedModal ? (
+            <NewBedForm
+              onModalChange={setShowAddBedModal}
+              showModal={showAddBedModal}
             />
           ) : null}
           <CardHeader title={headerTitle}>
-            <div className={styles.backgroundFetchingIndicator}>
-              <span>{isValidating ? <InlineLoading /> : null}</span>
-            </div>
-            <Button
-              kind="ghost"
-              renderIcon={(props) => <Add size={16} {...props} />}
-              onClick={() => setShowAddBedForm(true)}
-            >
-              {t("addBed", "Add bed")}
-            </Button>
+            <span>
+              {isValidating ? (
+                <InlineLoading />
+              ) : (
+                <Button
+                  kind="ghost"
+                  renderIcon={(props) => <Add size={16} {...props} />}
+                  onClick={() => setShowAddBedModal(true)}
+                >
+                  {t("addBed", "Add bed")}
+                </Button>
+              )}
+            </span>
           </CardHeader>
           <DataTable
             rows={tableRows}
