@@ -8,37 +8,36 @@ import {
 
 import { useBedType, saveBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
+import { BedType } from "../types";
+
+interface editDataType {
+    id: number;
+    uuid: string;
+    bedNumber: string;
+    bedType: BedType;
+    row: number;
+    column: number;
+    status: string;
+    location: Location;
+  }
 
 interface NewBedFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
+  editData,
 }
 
-const NewBedForm: React.FC<NewBedFormProps> = ({
+const EditBedForm: React.FC<NewBedFormProps> = ({
   showModal,
   onModalChange,
+  editData,
 }) => {
   const { t } = useTranslation();
-  const headerTitle = t("createNewBed", "Create a new bed");
+  const headerTitle = t("editBed", "Edit bed");
   const occupiedStatuses = ["Available", "Occupied"];
   const { bedTypes } = useBedType();
   const allLocations = useLocations();
   const availableBedTypes = bedTypes ? bedTypes : [];
-
-  const initialData = {
-    uuid: "",
-    bedNumber: "",
-    status: "",
-    description: "",
-    row: 0,
-    column: 0,
-    location: {
-      display: "",
-    },
-    bedType: {
-      name: "",
-    },
-  };
 
   const handleCreateQuestion = useCallback(
     (event: SyntheticEvent<{ name: { value: string } }>) => {
@@ -107,10 +106,10 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
         handleCreateQuestion={handleCreateQuestion}
         headerTitle={headerTitle}
         occupiedStatuses={occupiedStatuses}
-        initialData={initialData}
+        initialData={editData}
       />
     </>
   );
 };
 
-export default NewBedForm;
+export default EditBedForm;

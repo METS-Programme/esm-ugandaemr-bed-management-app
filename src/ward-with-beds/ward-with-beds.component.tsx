@@ -25,13 +25,19 @@ type RouteParams = { location: string };
 const WardWithBeds: React.FC = () => {
   const { location } = useParams<RouteParams>();
   const { isLoading, bedData } = useBedsForLocation(location);
+  console.log("bedData????", location, bedData);
+  
   const { name } = useLocationName(location);
+
   const [pageSize, setPageSize] = useState(10);
   const {
     results: paginatedData,
     goTo,
     currentPage,
   } = usePagination(bedData, pageSize);
+
+  // console.log("paginatedData", paginatedData);
+  
 
   if (isLoading) {
     <p>Loading...</p>;
@@ -130,7 +136,7 @@ const WardWithBeds: React.FC = () => {
               goTo(page);
               setPageSize(pageSize);
             }}
-            pageSizes={[10, 20]}
+            pageSizes={[10, 20, 30, 40, 50]}
             totalItems={paginatedData?.length}
           />
         </div>
