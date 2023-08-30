@@ -81,3 +81,10 @@ export type Bed = {
   column: number;
   status: "AVAILABLE" | string;
 };
+
+export interface BedType {
+  uuid: string;
+  name: string;
+  displayName: string;
+  description: string;
+}

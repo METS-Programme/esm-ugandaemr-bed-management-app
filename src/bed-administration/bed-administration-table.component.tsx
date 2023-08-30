@@ -5,32 +5,30 @@ import {
   isDesktop as desktopLayout,
   usePagination,
 } from "@openmrs/esm-framework";
-import {
-  findBedByLocation,
-  useWards,
-} from "../bed-management-summary/summary.resource";
+import { findBedByLocation, useWards } from "../summary/summary.resource";
 import { LOCATION_TAG_UUID } from "../constants";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import {
-  Button,
   DataTable,
+  TableContainer,
   DataTableSkeleton,
-  InlineLoading,
-  OverflowMenu,
-  OverflowMenuItem,
-  Pagination,
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableHeader,
   TableRow,
+  InlineLoading,
+  TableHead,
+  Table,
+  Pagination,
+  OverflowMenu,
+  OverflowMenuItem,
+  Button,
 } from "@carbon/react";
-import { Location } from "../types";
 import { Add } from "@carbon/react/icons";
+import type { Location } from "../types";
+import NewBedForm from "./new-bed-form.component";
+import Header from "../header/header.component";
 import styles from "./bed-administration-table.scss";
-import BedManagementHeader from "../bed-management-header/bed-management-header.component";
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
@@ -43,6 +41,7 @@ const BedAdminstration: React.FC = () => {
     Array<Location>
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
+  const [showAddBedModal, setShowAddBedModal] = useState(false);
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
@@ -73,9 +72,10 @@ const BedAdminstration: React.FC = () => {
 
         const updatedWards = (await Promise.all(promises)).filter(Boolean);
         setWardsGroupedByLocation(updatedWards);
+        setIsBedDataLoading(false);
       };
-      fetchData();
-      setIsBedDataLoading(false);
+
+      fetchData().finally(() => setIsBedDataLoading(false));
     }
   }, [data, isLoading]);
 
@@ -107,7 +107,7 @@ const BedAdminstration: React.FC = () => {
       {
         label: t("allocate", "Allocate"),
         form: {
-          name: "bed-adminstration-form",
+          name: "bed-administration-form",
         },
         mode: "view",
         intent: "*",
@@ -115,7 +115,7 @@ const BedAdminstration: React.FC = () => {
       {
         label: t("editBed", "Edit"),
         form: {
-          name: "bed-adminstration-form",
+          name: "bed-administration-form",
         },
         mode: "view",
         intent: "*",
@@ -134,9 +134,8 @@ const BedAdminstration: React.FC = () => {
         occupationStatus: "--",
         actions: (
           <OverflowMenu flipped className={styles.flippedOverflowMenu}>
-            {bedActions.map((actionItem, index) => (
+            {bedActions.map((actionItem) => (
               <OverflowMenuItem
-                key={`action-item-${index}`}
                 itemText={actionItem.label}
                 onClick={(e) => {
                   e.preventDefault();
@@ -151,35 +150,39 @@ const BedAdminstration: React.FC = () => {
 
   return (
     <>
-      <BedManagementHeader route={"Administration"} />
-
-      {isLoading || isBedDataLoading ? (
+      <Header route={"Administration"} />
+      {isBedDataLoading || isLoading ? (
         <div className={styles.widgetCard}>
           <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
         </div>
       ) : null}
-
       {error ? (
         <div className={styles.widgetCard}>
           <ErrorState error={error} headerTitle={headerTitle} />
         </div>
       ) : null}
-
-      {results?.length ? (
+      {tableRows?.length ? (
         <div className={styles.widgetCard}>
+          {showAddBedModal ? (
+            <NewBedForm
+              onModalChange={setShowAddBedModal}
+              showModal={showAddBedModal}
+            />
+          ) : null}
           <CardHeader title={headerTitle}>
-            <div className={styles.backgroundFetchingIndicator}>
-              <span>{isValidating ? <InlineLoading /> : null}</span>
-            </div>
-            <Button
-              kind="ghost"
-              renderIcon={(props) => <Add size={16} {...props} />}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              {t("addBed", "Add bed")}
-            </Button>
+            <span>
+              {isValidating ? (
+                <InlineLoading />
+              ) : (
+                <Button
+                  kind="ghost"
+                  renderIcon={(props) => <Add size={16} {...props} />}
+                  onClick={() => setShowAddBedModal(true)}
+                >
+                  {t("addBed", "Add bed")}
+                </Button>
+              )}
+            </span>
           </CardHeader>
           <DataTable
             rows={tableRows}

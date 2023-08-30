@@ -4,9 +4,9 @@ import {
   isDesktop,
   ExtensionSlot,
 } from "@openmrs/esm-framework";
-import styles from "./bed-management-dashboard.scss";
+import styles from "./dashboard.scss";
 
-export default function BedManagementDashboard() {
+export default function Dashboard() {
   const layout = useLayoutType();
 
   return (

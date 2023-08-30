@@ -8,7 +8,7 @@ import { ConfigurableLink } from "@openmrs/esm-framework";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
 
-const BedManagementSummary: React.FC = () => {
+const Summary: React.FC = () => {
   const { t } = useTranslation();
 
   const [bedsForLocation, setBedsForLocation] = useState([]);
@@ -80,4 +80,4 @@ const BedManagementSummary: React.FC = () => {
   }
 };
 
-export default BedManagementSummary;
+export default Summary;

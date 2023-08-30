@@ -7,13 +7,13 @@ import {
 import { useTranslation } from "react-i18next";
 import { Calendar, Location } from "@carbon/react/icons";
 import Illustration from "./illo";
-import styles from "./bed-management-header.scss";
+import styles from "./header.scss";
 
-type BedManagementHeaderProps = {
+type HeaderProps = {
   route: string;
 };
 
-const BedManagementHeader: React.FC<BedManagementHeaderProps> = ({ route }) => {
+const Header: React.FC<HeaderProps> = ({ route }) => {
   const { t } = useTranslation();
   const userSession = useSession();
   const userLocation = userSession?.sessionLocation?.display;
@@ -21,7 +21,9 @@ const BedManagementHeader: React.FC<BedManagementHeaderProps> = ({ route }) => {
   return (
     <div className={styles.header}>
       <div className={styles["left-justified-items"]}>
-        <ConfigurableLink to={`${window.getOpenmrsSpaBase()}bed-management`}>
+        <ConfigurableLink
+          to={`${window.getOpenmrsSpaBase()}bed-management/home`}
+        >
           <Illustration />
         </ConfigurableLink>
         <div className={styles["page-labels"]}>
@@ -44,4 +46,4 @@ const BedManagementHeader: React.FC<BedManagementHeaderProps> = ({ route }) => {
   );
 };
 
-export default BedManagementHeader;
+export default Header;
