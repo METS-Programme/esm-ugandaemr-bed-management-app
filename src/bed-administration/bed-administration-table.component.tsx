@@ -25,14 +25,26 @@ import {
   Button,
 } from "@carbon/react";
 import { Add } from "@carbon/react/icons";
-import type { Location } from "../types";
+import type { BedType, InitialData, Location } from "../types";
 import NewBedForm from "./new-bed-form.component";
 import Header from "../header/header.component";
 import styles from "./bed-administration-table.scss";
+import EditBedForm from "./edit-bed-form.component";
+
+interface Bed {
+  id: number;
+  uuid: string;
+  bedNumber: string;
+  bedType: BedType;
+  row: number;
+  column: number;
+  status: string;
+  location: Location;
+}
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
-  const headerTitle = t("awardAllocation", "Award Allocation");
+  const headerTitle = t("wardAllocation", "Ward Allocation");
   const layout = useLayoutType();
   const isTablet = layout === "tablet";
   const isDesktop = desktopLayout(layout);
@@ -42,6 +54,8 @@ const BedAdminstration: React.FC = () => {
   );
   const [isBedDataLoading, setIsBedDataLoading] = useState(false);
   const [showAddBedModal, setShowAddBedModal] = useState(false);
+  const [showEditBedModal, setShowEditBedModal] = useState(false);
+  const [editData, setEditData] = useState<InitialData>();
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
@@ -56,7 +70,7 @@ const BedAdminstration: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!isLoading && data) {
+    if (!isLoading && data && !wardsGroupedByLocations.length) {
       setIsBedDataLoading(true);
       const fetchData = async () => {
         const promises = data.data.results.map(async (ward) => {
@@ -77,7 +91,7 @@ const BedAdminstration: React.FC = () => {
 
       fetchData().finally(() => setIsBedDataLoading(false));
     }
-  }, [data, isLoading]);
+  }, [data, isLoading, wardsGroupedByLocations.length]);
 
   const tableHeaders = [
     {
@@ -138,6 +152,11 @@ const BedAdminstration: React.FC = () => {
               <OverflowMenuItem
                 itemText={actionItem.label}
                 onClick={(e) => {
+                  if (actionItem.label === "Edit") {
+                    setEditData(ward);
+                    setShowEditBedModal(true);
+                    setShowAddBedModal(false);
+                  }
                   e.preventDefault();
                 }}
               />
@@ -167,6 +186,13 @@ const BedAdminstration: React.FC = () => {
             <NewBedForm
               onModalChange={setShowAddBedModal}
               showModal={showAddBedModal}
+            />
+          ) : null}
+          {showEditBedModal ? (
+            <EditBedForm
+              onModalChange={setShowEditBedModal}
+              showModal={showEditBedModal}
+              editData={editData}
             />
           ) : null}
           <CardHeader title={headerTitle}>

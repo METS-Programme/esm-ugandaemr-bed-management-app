@@ -17,7 +17,7 @@ import {
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
-import type { BedType } from "../types";
+import type { BedType, InitialData } from "../types";
 import styles from "./bed-administration-table.scss";
 
 interface BedFormProps {
@@ -30,6 +30,7 @@ interface BedFormProps {
   ) => void;
   headerTitle: string;
   occupiedStatuses: string[];
+  initialData: InitialData;
 }
 
 const BedAdministrationForm: React.FC<BedFormProps> = ({
@@ -40,14 +41,20 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   handleCreateQuestion,
   headerTitle,
   occupiedStatuses,
+  initialData,
 }: BedFormProps) => {
   const { t } = useTranslation();
 
-  const [bedLabel, setBedIdLabel] = useState("");
-  const [descriptionLabel, setDescriptionLabel] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [bedRow, setBedRow] = useState(0);
-  const [bedColumn, setBedColumn] = useState(0);
+  const [bedLabel, setBedIdLabel] = useState(initialData.bedNumber);
+  const [descriptionLabel, setDescriptionLabel] = useState(
+    initialData.description
+  );
+  const [selectedLocationId, setSelectedLocationId] = useState("");
+  const [selectedLocationName, setSelectedLocationName] = useState(
+    initialData.location.display
+  );
+  const [bedRow, setBedRow] = useState(initialData.row);
+  const [bedColumn, setBedColumn] = useState(initialData.column);
 
   const changebedNumber = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -121,16 +128,18 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
                 label={t("location", "Locations")}
                 shouldFilterItem={filterLocationNames}
                 items={allLocations}
-                onChange={({ selectedItem }) =>
-                  setSelectedLocation(selectedItem?.uuid)
-                }
+                onChange={({ selectedItem }) => {
+                  setSelectedLocationId(selectedItem?.uuid);
+                  setSelectedLocationName(selectedItem?.display);
+                }}
                 selectedItem={allLocations?.find(
-                  (location) => location?.uuid === selectedLocation
+                  (location) => location?.uuid === selectedLocationId
                 )}
                 itemToString={(location) => location?.display ?? ""}
                 placeholder={t("selectBedLocation", "Select a bed Location")}
                 titleText={t("bedLocation", "Locations")}
-                title={selectedLocation}
+                title={selectedLocationId}
+                value={selectedLocationName}
                 required
               />
 

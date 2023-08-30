@@ -37,7 +37,7 @@ export const getBedsForLocation = (locationUuid: string) => {
 };
 
 export const useBedsForLocation = (locationUuid: string) => {
-  const apiUrl = `/ws/rest/v1/bed?locationUuid=${locationUuid}?v=full`;
+  const apiUrl = `/ws/rest/v1/bed?locationUuid=${locationUuid}&v=full`;
 
   const { data, isLoading, error } = useSWR<{ data }, Error>(
     locationUuid ? apiUrl : null,
