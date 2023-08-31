@@ -97,7 +97,7 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
 
               <TextArea
                 id="description"
-                labelText={t("description", "Bed description")}
+                labelText={t("description", "Bed Description")}
                 onChange={(event) => {
                   setDescriptionLabel(event.target.value);
                 }}
@@ -108,21 +108,24 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               <NumberInput
                 hideSteppers
                 id="bedRow"
-                invalidText="Bed row number is not valid"
+                invalidText="Bed row number is not valid (minimum of 0)"
                 label="Bed Row"
-                min={0}
+                min={1}
                 value={t("bedRow", `${bedRow}`)}
                 onChange={(event) => setBedRow(event.target.value)}
+                required
               />
 
               <NumberInput
                 hideSteppers
                 id="bedColumn"
-                invalidText="Bed column number is not valid"
+                invalidText="Bed column number is not valid (minimum of 0)"
                 label="Bed Column"
-                min={0}
+                min={1}
                 value={t("bedColumn", `${bedColumn}`)}
                 onChange={(event) => setBedColumn(event.target.value)}
+                focus
+                required
               />
 
               <ComboBox

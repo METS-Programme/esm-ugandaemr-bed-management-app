@@ -13,11 +13,13 @@ import BedAdministrationForm from "./bed-administration-form.component";
 interface NewBedFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
+  refetchBedData: (showModal: boolean) => void;
 }
 
 const NewBedForm: React.FC<NewBedFormProps> = ({
   showModal,
   onModalChange,
+  refetchBedData,
 }) => {
   const { t } = useTranslation();
   const headerTitle = t("createNewBed", "Create a new bed");
@@ -83,6 +85,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
               " " +
               t("saveSuccessMessage", "was created successfully."),
           });
+          refetchBedData(true);
           onModalChange(false);
         })
         .catch((error) => {

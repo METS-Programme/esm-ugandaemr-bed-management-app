@@ -204,6 +204,7 @@ const BedAdminstration: React.FC = () => {
             <NewBedForm
               onModalChange={setShowAddBedModal}
               showModal={showAddBedModal}
+              refetchBedData={setRefetchBedData}
             />
           ) : null}
           {showEditBedModal ? (
