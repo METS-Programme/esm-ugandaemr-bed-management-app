@@ -1,4 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
+import capitalize from "lodash-es/capitalize";
 import {
   SelectItem,
   ModalHeader,
@@ -55,7 +56,12 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   );
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
-  const [occupiedStatus, setOccupiedStatus] = useState(initialData.status);
+  const [occupiedStatus, setOccupiedStatus] = useState(
+    capitalize(initialData.status)
+  );
+  const [selectedBedType, setSelectedBedType] = useState(
+    initialData.bedType.name
+  );
 
   const filterLocationNames = (location) => {
     return (
@@ -141,6 +147,7 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               />
 
               <Select
+                defaultValue={occupiedStatus}
                 onChange={(event) => setOccupiedStatus(event.target.value)}
                 id="occupiedStatus"
                 invalidText={t("typeRequired", "Type is required")}
@@ -158,7 +165,8 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               </Select>
 
               <Select
-                onChange={(event) => event.target.value}
+                defaultValue={selectedBedType}
+                onChange={(event) => setSelectedBedType(event.target.value)}
                 id="bedType"
                 invalidText={t("typeRequired", "Type is required")}
                 labelText={t("bedType", "Bed Type")}
