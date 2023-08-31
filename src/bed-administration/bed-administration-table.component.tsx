@@ -177,10 +177,10 @@ const BedAdminstration: React.FC = () => {
             initialSelectedItem={"All"}
             label=""
             titleText={
-              t("filterByoccupancyStatus", "Filter by occupancy Status") + ":"
+              t("filterByoccupancyStatus", "Filter by occupancy status") + ":"
             }
             type="inline"
-            items={["All", "Available", "occupied"]}
+            items={["All", "Available", "Occupied"]}
             onChange={handleBedStatusChange}
           />
         </div>
@@ -191,7 +191,9 @@ const BedAdminstration: React.FC = () => {
         </div>
       ) : null}
       {!isLoading && !tableRows.length && !error && !isBedDataLoading ? (
-        <EmptyState msg="No bed details found" helper="" />
+        <div className={styles.widgetCard}>
+          <EmptyState msg="No bed details found" helper="" />
+        </div>
       ) : null}
       {error ? (
         <div className={styles.widgetCard}>

@@ -99,7 +99,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
         });
       onModalChange(false);
     },
-    [onModalChange, t]
+    [onModalChange, refetchBedData, t]
   );
 
   return (
