@@ -20,33 +20,24 @@ import {
   TableHead,
   Table,
   Pagination,
-  OverflowMenu,
-  OverflowMenuItem,
   Button,
+  Tag,
+  Dropdown,
 } from "@carbon/react";
-import { Add } from "@carbon/react/icons";
-import type { BedType, InitialData, Location } from "../types";
+import { Add, Edit } from "@carbon/react/icons";
+import type { InitialData, Location } from "../types";
 import NewBedForm from "./new-bed-form.component";
 import Header from "../header/header.component";
 import styles from "./bed-administration-table.scss";
 import EditBedForm from "./edit-bed-form.component";
-
-interface Bed {
-  id: number;
-  uuid: string;
-  bedNumber: string;
-  bedType: BedType;
-  row: number;
-  column: number;
-  status: string;
-  location: Location;
-}
+import EmptyState from "../empty-state/empty-state.component";
 
 const BedAdminstration: React.FC = () => {
   const { t } = useTranslation();
   const headerTitle = t("wardAllocation", "Ward Allocation");
   const layout = useLayoutType();
   const isTablet = layout === "tablet";
+  const responsiveSize = isTablet ? "lg" : "sm";
   const isDesktop = desktopLayout(layout);
 
   const [wardsGroupedByLocations, setWardsGroupedByLocation] = useState(
@@ -56,21 +47,50 @@ const BedAdminstration: React.FC = () => {
   const [showAddBedModal, setShowAddBedModal] = useState(false);
   const [showEditBedModal, setShowEditBedModal] = useState(false);
   const [editData, setEditData] = useState<InitialData>();
+  const [filteroption, setFilterOption] = useState("ALL");
+  const [refetchBedData, setRefetchBedData] = useState(false);
+
+  function CustomTag({ condition }: { condition: boolean }) {
+    const { t } = useTranslation();
+
+    if (condition) {
+      return (
+        <Tag type="green" size="md" title="Clear Filter" data-testid="yes-tag">
+          {t("yes", "Yes")}
+        </Tag>
+      );
+    }
+
+    return (
+      <Tag type="red" size="md" title="Clear Filter" data-testid="no-tag">
+        {t("no", "No")}
+      </Tag>
+    );
+  }
+
+  const handleBedStatusChange = ({ selectedItem }: { selectedItem: string }) =>
+    setFilterOption(selectedItem.trim().toUpperCase());
 
   const bedsMappedToLocation = wardsGroupedByLocations?.length
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
   const { data, isLoading, error, isValidating } = useWards(LOCATION_TAG_UUID);
+
   const [currentPageSize, setPageSize] = useState(10);
   const pageSizes = [10, 20, 30, 40, 50];
   const { results, currentPage, totalPages, goTo } = usePagination(
-    bedsMappedToLocation ?? [],
+    filteroption === "ALL"
+      ? bedsMappedToLocation
+      : bedsMappedToLocation.filter((bed) => bed.status === filteroption) ?? [],
     currentPageSize
   );
 
   useEffect(() => {
-    if (!isLoading && data && !wardsGroupedByLocations.length) {
+    if (
+      (!isLoading && data && !wardsGroupedByLocations.length) ||
+      refetchBedData
+    ) {
       setIsBedDataLoading(true);
       const fetchData = async () => {
         const promises = data.data.results.map(async (ward) => {
@@ -88,10 +108,10 @@ const BedAdminstration: React.FC = () => {
         setWardsGroupedByLocation(updatedWards);
         setIsBedDataLoading(false);
       };
-
+      setRefetchBedData(false);
       fetchData().finally(() => setIsBedDataLoading(false));
     }
-  }, [data, isLoading, wardsGroupedByLocations.length]);
+  }, [data, isLoading, refetchBedData, wardsGroupedByLocations.length]);
 
   const tableHeaders = [
     {
@@ -103,12 +123,12 @@ const BedAdminstration: React.FC = () => {
       header: t("location", "Location"),
     },
     {
-      key: "occupationStatus",
-      header: t("occupationStatus", "Occupation Status"),
+      key: "occupancyStatus",
+      header: t("occupancyStatus", "Occupied"),
     },
     {
-      key: "currentStatus",
-      header: t("currentStatus", "Current Status"),
+      key: "allocationStatus",
+      header: t("allocationStatus", "Allocated"),
     },
     {
       key: "actions",
@@ -116,63 +136,63 @@ const BedAdminstration: React.FC = () => {
     },
   ];
 
-  const bedActions = useMemo(
-    () => [
-      {
-        label: t("allocate", "Allocate"),
-        form: {
-          name: "bed-administration-form",
-        },
-        mode: "view",
-        intent: "*",
-      },
-      {
-        label: t("editBed", "Edit"),
-        form: {
-          name: "bed-administration-form",
-        },
-        mode: "view",
-        intent: "*",
-      },
-    ],
-    [t]
-  );
-
   const tableRows = useMemo(() => {
     return results.map((ward) => {
       return {
         id: ward.uuid,
         bedNumber: ward.bedNumber,
         location: ward.location.display,
-        currentStatus: ward.status,
-        occupationStatus: "--",
+        occupancyStatus: <CustomTag condition={ward?.status === "OCCUPIED"} />,
+        allocationStatus: <CustomTag condition={ward.location?.uuid} />,
         actions: (
-          <OverflowMenu flipped className={styles.flippedOverflowMenu}>
-            {bedActions.map((actionItem) => (
-              <OverflowMenuItem
-                itemText={actionItem.label}
-                onClick={(e) => {
-                  if (actionItem.label === "Edit") {
-                    setEditData(ward);
-                    setShowEditBedModal(true);
-                    setShowAddBedModal(false);
-                  }
-                  e.preventDefault();
-                }}
-              />
-            ))}
-          </OverflowMenu>
+          <>
+            <Button
+              enterDelayMs={300}
+              renderIcon={Edit}
+              onClick={(e) => {
+                e.preventDefault();
+                setEditData(ward);
+                setShowEditBedModal(true);
+                setShowAddBedModal(false);
+              }}
+              kind={"ghost"}
+              iconDescription={t("editBed", "Edit Bed")}
+              hasIconOnly
+              size={responsiveSize}
+              tooltipAlignment="start"
+            />
+          </>
         ),
       };
     });
-  }, [bedActions, results]);
+  }, [responsiveSize, results, t]);
 
   return (
     <>
-      <Header route={"Administration"} />
+      <Header route={"Ward Allocation"} />
+      <div className={styles.flexContainer}>
+        <div className={styles.filterContainer}>
+          <Dropdown
+            id="occupancyStatus"
+            initialSelectedItem={"All"}
+            label=""
+            titleText={
+              t("filterByoccupancyStatus", "Filter by occupancy status") + ":"
+            }
+            type="inline"
+            items={["All", "Available", "Occupied"]}
+            onChange={handleBedStatusChange}
+          />
+        </div>
+      </div>
       {isBedDataLoading || isLoading ? (
         <div className={styles.widgetCard}>
           <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />
+        </div>
+      ) : null}
+      {!isLoading && !tableRows.length && !error && !isBedDataLoading ? (
+        <div className={styles.widgetCard}>
+          <EmptyState msg="No bed details found" helper="" />
         </div>
       ) : null}
       {error ? (
@@ -180,12 +200,13 @@ const BedAdminstration: React.FC = () => {
           <ErrorState error={error} headerTitle={headerTitle} />
         </div>
       ) : null}
-      {tableRows?.length ? (
+      {tableRows?.length && !isBedDataLoading ? (
         <div className={styles.widgetCard}>
           {showAddBedModal ? (
             <NewBedForm
               onModalChange={setShowAddBedModal}
               showModal={showAddBedModal}
+              refetchBedData={setRefetchBedData}
             />
           ) : null}
           {showEditBedModal ? (
@@ -193,6 +214,7 @@ const BedAdminstration: React.FC = () => {
               onModalChange={setShowEditBedModal}
               showModal={showEditBedModal}
               editData={editData}
+              refetchBedData={setRefetchBedData}
             />
           ) : null}
           <CardHeader title={headerTitle}>

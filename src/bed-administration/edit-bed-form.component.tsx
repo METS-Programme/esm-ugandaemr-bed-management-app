@@ -7,19 +7,21 @@ import {
 } from "@openmrs/esm-framework";
 
 import type { InitialData } from "../types";
-import { useBedType, saveBed } from "./bed-administration.resource";
+import { useBedType, editBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
 
 interface NewBedFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
   editData: InitialData;
+  refetchBedData: (showModal: boolean) => void;
 }
 
 const EditBedForm: React.FC<NewBedFormProps> = ({
   showModal,
   onModalChange,
   editData,
+  refetchBedData,
 }) => {
   const { t } = useTranslation();
   const headerTitle = t("editBed", "Edit bed");
@@ -40,34 +42,50 @@ const EditBedForm: React.FC<NewBedFormProps> = ({
         bedType: { value: string };
       };
 
-      const bedNumber = target.bedId.value;
-      const description = target.description.value;
-      const occupiedStatus = target.occupiedStatus.value;
-      const bedRow = target.bedRow.value;
-      const bedColumn = target.bedColumn.value;
-      const bedLocation = target.location.title;
-      const bedType = target.bedType.value;
+      const bedId = editData.uuid;
+
+      const bedNumber = target.bedId.value
+        ? target.bedId.value
+        : editData.bedNumber;
+      const description = target.description.value
+        ? target.description.value
+        : editData.description;
+      const occupiedStatus = target.occupiedStatus.value
+        ? target.occupiedStatus.value
+        : editData.status;
+      const bedRow = target.bedRow.value
+        ? parseInt(target.bedRow.value)
+        : editData.row;
+      const bedColumn = target.bedColumn.value
+        ? parseInt(target.bedColumn.value)
+        : editData.column;
+      const bedLocation = target.location.title
+        ? target.location.title
+        : editData.location.uuid;
+      const bedType = target.bedType.value
+        ? target.bedType.value
+        : editData.bedType.name;
 
       const bedObject = {
         bedNumber,
         bedType,
         description,
         status: occupiedStatus.toUpperCase(),
-        row: parseInt(bedRow),
-        column: parseInt(bedColumn),
+        row: bedRow,
+        column: bedColumn,
         locationUuid: bedLocation,
       };
 
-      saveBed({ bedObject })
+      editBed({ bedObject, bedId })
         .then(() => {
           showToast({
-            title: t("formCreated", "New bed created"),
+            title: t("formSaved", "Bed saved"),
             kind: "success",
             critical: true,
             description:
               bedNumber +
               " " +
-              t("saveSuccessMessage", "was created successfully."),
+              t("saveSuccessMessage", "was saved successfully."),
           });
           onModalChange(false);
         })
@@ -81,8 +99,9 @@ const EditBedForm: React.FC<NewBedFormProps> = ({
           onModalChange(false);
         });
       onModalChange(false);
+      refetchBedData(true);
     },
-    [onModalChange, t]
+    [onModalChange, refetchBedData, editData, t]
   );
 
   return (

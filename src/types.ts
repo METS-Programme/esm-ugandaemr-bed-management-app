@@ -98,6 +98,7 @@ export interface InitialData {
   column: number;
   location: {
     display: string;
+    uuid: string;
   };
   bedType: {
     name: string;

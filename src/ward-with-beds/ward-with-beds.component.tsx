@@ -93,7 +93,7 @@ const WardWithBeds: React.FC = () => {
               iconDescription="Return home"
               onClick={() =>
                 navigate({
-                  to: `${window.getOpenmrsSpaBase()}bed-management/home`,
+                  to: `${window.getOpenmrsSpaBase()}bed-management/summary`,
                 })
               }
             >

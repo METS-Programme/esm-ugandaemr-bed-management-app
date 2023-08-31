@@ -23,7 +23,7 @@ const Root: React.FC = () => {
       <SideMenu />
       <main className={styles.container}>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/summary" element={<Home />} />
           <Route path="/location/:location" element={<WardWithBeds />} />
           <Route path="/administration" element={<BedAdministration />} />
         </Routes>

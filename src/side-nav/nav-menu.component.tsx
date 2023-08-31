@@ -5,7 +5,7 @@ import NavLink from "./nav-link.component";
 const BedManagementNavMenu: React.FC = () => {
   return (
     <>
-      <NavLink title="Home" />
+      <NavLink title="Summary" />
       <ExtensionSlot name="bed-management-sidebar-slot" />
     </>
   );

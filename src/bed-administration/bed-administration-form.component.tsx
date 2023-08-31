@@ -1,4 +1,5 @@
-import React, { SyntheticEvent, useCallback, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
+import capitalize from "lodash-es/capitalize";
 import {
   SelectItem,
   ModalHeader,
@@ -55,17 +56,19 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   );
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
-
-  const changebedNumber = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setBedIdLabel(event.target.value),
-    []
+  const [occupiedStatus, setOccupiedStatus] = useState(
+    capitalize(initialData.status)
+  );
+  const [selectedBedType, setSelectedBedType] = useState(
+    initialData.bedType.name
   );
 
   const filterLocationNames = (location) => {
-    return location.item.display
-      ?.toLowerCase()
-      .includes(location?.inputValue?.toLowerCase());
+    return (
+      location.item.display
+        ?.toLowerCase()
+        .includes(location?.inputValue?.toLowerCase()) ?? []
+    );
   };
 
   return (
@@ -85,16 +88,16 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
                 placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
                 invalidText={t(
                   "bedIdExists",
-                  "This bed ID already exists in your schema"
+                  "This bed  number has already been generated for this ward"
                 )}
-                value={bedLabel}
-                onChange={changebedNumber}
+                value={bedLabel ?? ""}
+                onChange={(event) => setBedIdLabel(event.target.value)}
                 required
               />
 
               <TextArea
                 id="description"
-                labelText={t("description", "Bed description")}
+                labelText={t("description", "Bed Description")}
                 onChange={(event) => {
                   setDescriptionLabel(event.target.value);
                 }}
@@ -105,21 +108,24 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               <NumberInput
                 hideSteppers
                 id="bedRow"
-                invalidText="Bed row number is not valid"
+                invalidText="Bed row number is not valid (minimum of 0)"
                 label="Bed Row"
-                min={0}
+                min={1}
                 value={t("bedRow", `${bedRow}`)}
                 onChange={(event) => setBedRow(event.target.value)}
+                required
               />
 
               <NumberInput
                 hideSteppers
                 id="bedColumn"
-                invalidText="Bed column number is not valid"
+                invalidText="Bed column number is not valid (minimum of 0)"
                 label="Bed Column"
-                min={0}
+                min={1}
                 value={t("bedColumn", `${bedColumn}`)}
                 onChange={(event) => setBedColumn(event.target.value)}
+                focus
+                required
               />
 
               <ComboBox
@@ -144,21 +150,26 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
               />
 
               <Select
-                onChange={(event) => event.target.value}
+                defaultValue={occupiedStatus}
+                onChange={(event) => setOccupiedStatus(event.target.value)}
                 id="occupiedStatus"
                 invalidText={t("typeRequired", "Type is required")}
                 labelText={t("occupiedStatus", "Occupied Status")}
+                value={occupiedStatus}
                 required
               >
                 {occupiedStatuses.map((element, key) => (
-                  <SelectItem text={element} value={element} key={key}>
-                    {t("occupiedStatus", `${element}`)}
-                  </SelectItem>
+                  <SelectItem
+                    text={t("occupiedStatus", `${element}`)}
+                    value={t("occupiedStatus", `${element}`)}
+                    key={key}
+                  />
                 ))}
               </Select>
 
               <Select
-                onChange={(event) => event.target.value}
+                defaultValue={selectedBedType}
+                onChange={(event) => setSelectedBedType(event.target.value)}
                 id="bedType"
                 invalidText={t("typeRequired", "Type is required")}
                 labelText={t("bedType", "Bed Type")}

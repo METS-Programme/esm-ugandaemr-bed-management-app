@@ -27,9 +27,33 @@ export function useBedType() {
     openmrsFetch
   );
 
-  const bedTypes = useMemo(
-    () => data?.data?.results?.map((response) => response) ?? [],
-    [data?.data?.results]
-  );
+  const bedTypes = useMemo(() => {
+    const rawData = data?.data?.results ?? [];
+    const uniqueBedTypes = [];
+
+    rawData.forEach((response) => {
+      if (!uniqueBedTypes.some((bedType) => bedType.name === response.name)) {
+        uniqueBedTypes.push(response);
+      }
+    });
+
+    return uniqueBedTypes;
+  }, [data?.data?.results]);
+
   return { bedTypes: bedTypes ? bedTypes : [], isLoading, error };
+}
+
+export async function editBed({
+  bedObject,
+  bedId,
+}): Promise<FetchResponse<BedForm>> {
+  const response: FetchResponse = await openmrsFetch(
+    `/ws/rest/v1/bed/${bedId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: bedObject,
+    }
+  );
+  return response;
 }

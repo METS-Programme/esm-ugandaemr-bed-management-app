@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ route }) => {
     <div className={styles.header}>
       <div className={styles["left-justified-items"]}>
         <ConfigurableLink
-          to={`${window.getOpenmrsSpaBase()}bed-management/home`}
+          to={`${window.getOpenmrsSpaBase()}bed-management/summary`}
         >
           <Illustration />
         </ConfigurableLink>
