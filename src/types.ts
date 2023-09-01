@@ -1,3 +1,5 @@
+import type { KeyedMutator } from "swr";
+
 export type Tag = {
   uuid: string;
   display: string;
@@ -104,3 +106,9 @@ export interface InitialData {
     name: string;
   };
 }
+
+export type Mutator = KeyedMutator<{
+  data: {
+    results: Array<any>;
+  };
+}>;

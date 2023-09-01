@@ -11,11 +11,11 @@ interface BedForm {
   locationUuid: string;
 }
 
-export async function saveBed({ bedObject }): Promise<FetchResponse<BedForm>> {
+export async function saveBed({ bedPayload }): Promise<FetchResponse<BedForm>> {
   const response: FetchResponse = await openmrsFetch(`/ws/rest/v1/bed`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: bedObject,
+    body: bedPayload,
   });
   return response;
 }
@@ -44,7 +44,7 @@ export function useBedType() {
 }
 
 export async function editBed({
-  bedObject,
+  bedPayload,
   bedId,
 }): Promise<FetchResponse<BedForm>> {
   const response: FetchResponse = await openmrsFetch(
@@ -52,7 +52,7 @@ export async function editBed({
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: bedObject,
+      body: bedPayload,
     }
   );
   return response;

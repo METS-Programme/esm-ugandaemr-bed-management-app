@@ -108,6 +108,6 @@ export const useWards = (locationUuid: string) => {
     error,
     isLoading,
     isValidating,
-    mutateEnrollments: mutate,
+    mutate,
   };
 };
