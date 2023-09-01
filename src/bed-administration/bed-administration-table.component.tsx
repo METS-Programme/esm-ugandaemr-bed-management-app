@@ -47,7 +47,7 @@ const BedAdminstration: React.FC = () => {
   const [showAddBedModal, setShowAddBedModal] = useState(false);
   const [showEditBedModal, setShowEditBedModal] = useState(false);
   const [editData, setEditData] = useState<InitialData>();
-  const [filteroption, setFilterOption] = useState("ALL");
+  const [filterOption, setFilterOption] = useState("ALL");
   const [refetchBedData, setRefetchBedData] = useState(false);
 
   function CustomTag({ condition }: { condition: boolean }) {
@@ -55,14 +55,14 @@ const BedAdminstration: React.FC = () => {
 
     if (condition) {
       return (
-        <Tag type="green" size="md" title="Clear Filter" data-testid="yes-tag">
+        <Tag type="green" size="md" title="Yes tag">
           {t("yes", "Yes")}
         </Tag>
       );
     }
 
     return (
-      <Tag type="red" size="md" title="Clear Filter" data-testid="no-tag">
+      <Tag type="red" size="md" title="No tag">
         {t("no", "No")}
       </Tag>
     );
@@ -75,14 +75,15 @@ const BedAdminstration: React.FC = () => {
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
-  const { data, isLoading, error, isValidating } = useWards(LOCATION_TAG_UUID);
+  const { data, isLoading, error, isValidating, mutate } =
+    useWards(LOCATION_TAG_UUID);
 
   const [currentPageSize, setPageSize] = useState(10);
   const pageSizes = [10, 20, 30, 40, 50];
   const { results, currentPage, totalPages, goTo } = usePagination(
-    filteroption === "ALL"
+    filterOption === "ALL"
       ? bedsMappedToLocation
-      : bedsMappedToLocation.filter((bed) => bed.status === filteroption) ?? [],
+      : bedsMappedToLocation.filter((bed) => bed.status === filterOption) ?? [],
     currentPageSize
   );
 
@@ -169,7 +170,7 @@ const BedAdminstration: React.FC = () => {
 
   return (
     <>
-      <Header route={"Ward Allocation"} />
+      <Header route="Ward Allocation" />
       <div className={styles.flexContainer}>
         <div className={styles.filterContainer}>
           <Dropdown
@@ -177,7 +178,7 @@ const BedAdminstration: React.FC = () => {
             initialSelectedItem={"All"}
             label=""
             titleText={
-              t("filterByoccupancyStatus", "Filter by occupancy status") + ":"
+              t("filterByOccupancyStatus", "Filter by occupancy status") + ":"
             }
             type="inline"
             items={["All", "Available", "Occupied"]}
@@ -206,7 +207,7 @@ const BedAdminstration: React.FC = () => {
             <NewBedForm
               onModalChange={setShowAddBedModal}
               showModal={showAddBedModal}
-              refetchBedData={setRefetchBedData}
+              mutate={mutate}
             />
           ) : null}
           {showEditBedModal ? (
@@ -214,23 +215,20 @@ const BedAdminstration: React.FC = () => {
               onModalChange={setShowEditBedModal}
               showModal={showEditBedModal}
               editData={editData}
-              refetchBedData={setRefetchBedData}
+              mutate={mutate}
             />
           ) : null}
           <CardHeader title={headerTitle}>
-            <span>
-              {isValidating ? (
-                <InlineLoading />
-              ) : (
-                <Button
-                  kind="ghost"
-                  renderIcon={(props) => <Add size={16} {...props} />}
-                  onClick={() => setShowAddBedModal(true)}
-                >
-                  {t("addBed", "Add bed")}
-                </Button>
-              )}
+            <span className={styles.backgroundDataFetchingIndicator}>
+              <span>{isValidating ? <InlineLoading /> : null}</span>
             </span>
+            <Button
+              kind="ghost"
+              renderIcon={(props) => <Add size={16} {...props} />}
+              onClick={() => setShowAddBedModal(true)}
+            >
+              {t("addBed", "Add bed")}
+            </Button>
           </CardHeader>
           <DataTable
             rows={tableRows}

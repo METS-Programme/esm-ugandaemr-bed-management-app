@@ -90,14 +90,14 @@ const WardWithBeds: React.FC = () => {
             <Button
               kind="ghost"
               renderIcon={(props) => <ArrowLeft size={24} {...props} />}
-              iconDescription="Return home"
+              iconDescription="Return to summary"
               onClick={() =>
                 navigate({
                   to: `${window.getOpenmrsSpaBase()}bed-management/summary`,
                 })
               }
             >
-              <span>Return home</span>
+              <span>Return to summary</span>
             </Button>
           </div>
           <div className={styles.container}>

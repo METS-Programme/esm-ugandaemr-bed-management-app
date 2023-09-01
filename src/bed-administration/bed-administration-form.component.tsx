@@ -1,25 +1,24 @@
 import React, { SyntheticEvent, useState } from "react";
 import capitalize from "lodash-es/capitalize";
 import {
-  SelectItem,
-  ModalHeader,
-  Stack,
-  ModalFooter,
-  ComposedModal,
   Button,
-  ModalBody,
-  FormGroup,
-  TextInput,
-  Select,
-  Form,
-  TextArea,
   ComboBox,
+  ComposedModal,
+  Form,
+  FormGroup,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   NumberInput,
+  Select,
+  SelectItem,
+  Stack,
+  TextArea,
+  TextInput,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
 import type { BedType, InitialData } from "../types";
-import styles from "./bed-administration-table.scss";
 
 interface BedFormProps {
   showModal: boolean;
@@ -30,7 +29,7 @@ interface BedFormProps {
     event: SyntheticEvent<{ name: { value: string } }>
   ) => void;
   headerTitle: string;
-  occupiedStatuses: string[];
+  occupancyStatuses: string[];
   initialData: InitialData;
 }
 
@@ -41,7 +40,7 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   allLocations,
   handleCreateQuestion,
   headerTitle,
-  occupiedStatuses,
+  occupancyStatuses,
   initialData,
 }: BedFormProps) => {
   const { t } = useTranslation();
@@ -56,7 +55,7 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   );
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
-  const [occupiedStatus, setOccupiedStatus] = useState(
+  const [occupancyStatus, setOccupancyStatus] = useState(
     capitalize(initialData.status)
   );
   const [selectedBedType, setSelectedBedType] = useState(
@@ -78,56 +77,58 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
       preventCloseOnClickOutside
     >
       <ModalHeader title={headerTitle} />
-      <Form className={styles.form} onSubmit={handleCreateQuestion}>
+      <Form onSubmit={handleCreateQuestion}>
         <ModalBody hasScrollingContent>
-          <FormGroup legendText={""}>
-            <Stack gap={5}>
+          <Stack gap={3}>
+            <FormGroup legendText={""}>
               <TextInput
                 id="bedId"
-                labelText={t("bedId", "Bed Number")}
+                labelText={t("bedId", "Bed number")}
                 placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
                 invalidText={t(
                   "bedIdExists",
-                  "This bed  number has already been generated for this ward"
+                  "This bed number has already been generated for this ward"
                 )}
                 value={bedLabel ?? ""}
                 onChange={(event) => setBedIdLabel(event.target.value)}
                 required
               />
+            </FormGroup>
 
+            <FormGroup>
               <TextArea
+                rows={2}
                 id="description"
-                labelText={t("description", "Bed Description")}
-                onChange={(event) => {
-                  setDescriptionLabel(event.target.value);
-                }}
+                labelText={t("description", "Bed description")}
+                onChange={(event) => setDescriptionLabel(event.target.value)}
                 value={descriptionLabel}
                 placeholder={t("description", "Enter the bed description")}
               />
+            </FormGroup>
 
+            <FormGroup>
               <NumberInput
                 hideSteppers
                 id="bedRow"
-                invalidText="Bed row number is not valid (minimum of 0)"
-                label="Bed Row"
-                min={1}
-                value={t("bedRow", `${bedRow}`)}
+                label="Bed row"
+                value={bedRow}
                 onChange={(event) => setBedRow(event.target.value)}
                 required
               />
+            </FormGroup>
 
+            <FormGroup>
               <NumberInput
                 hideSteppers
                 id="bedColumn"
-                invalidText="Bed column number is not valid (minimum of 0)"
-                label="Bed Column"
-                min={1}
-                value={t("bedColumn", `${bedColumn}`)}
+                label="Bed column"
+                value={bedColumn}
                 onChange={(event) => setBedColumn(event.target.value)}
-                focus
                 required
               />
+            </FormGroup>
 
+            <FormGroup>
               <ComboBox
                 aria-label={t("location", "Locations")}
                 id="location"
@@ -142,51 +143,55 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
                   (location) => location?.uuid === selectedLocationId
                 )}
                 itemToString={(location) => location?.display ?? ""}
-                placeholder={t("selectBedLocation", "Select a bed Location")}
+                placeholder={t("selectBedLocation", "Select a bed location")}
                 titleText={t("bedLocation", "Locations")}
                 title={selectedLocationId}
                 value={selectedLocationName}
                 required
               />
+            </FormGroup>
 
+            <FormGroup>
               <Select
-                defaultValue={occupiedStatus}
-                onChange={(event) => setOccupiedStatus(event.target.value)}
-                id="occupiedStatus"
+                defaultValue={occupancyStatus}
+                onChange={(event) => setOccupancyStatus(event.target.value)}
+                id="occupancyStatus"
                 invalidText={t("typeRequired", "Type is required")}
-                labelText={t("occupiedStatus", "Occupied Status")}
-                value={occupiedStatus}
+                labelText={t("occupancyStatus", "Occupied Status")}
+                value={occupancyStatus}
                 required
               >
-                {occupiedStatuses.map((element, key) => (
+                {occupancyStatuses.map((occupancyStatus, index) => (
                   <SelectItem
-                    text={t("occupiedStatus", `${element}`)}
-                    value={t("occupiedStatus", `${element}`)}
-                    key={key}
+                    text={t("occupancyStatus", `${occupancyStatus}`)}
+                    value={t("occupancyStatus", `${occupancyStatus}`)}
+                    key={`occupancyStatus-${index}`}
                   />
                 ))}
               </Select>
+            </FormGroup>
 
+            <FormGroup>
               <Select
                 defaultValue={selectedBedType}
                 onChange={(event) => setSelectedBedType(event.target.value)}
                 id="bedType"
                 invalidText={t("typeRequired", "Type is required")}
-                labelText={t("bedType", "Bed Type")}
+                labelText={t("bedType", "Bed type")}
                 required
               >
-                {availableBedTypes.map((element, key) => (
+                {availableBedTypes.map((bedType, index) => (
                   <SelectItem
-                    text={element.name}
-                    value={t("bedType", `${element.name}`)}
-                    key={key}
+                    text={bedType.name}
+                    value={t("bedType", `${bedType.name}`)}
+                    key={`bedType-${index}`}
                   >
-                    {t("bedType", `${element.name}`)}
+                    {t("bedType", `${bedType.name}`)}
                   </SelectItem>
                 ))}
               </Select>
-            </Stack>
-          </FormGroup>
+            </FormGroup>
+          </Stack>
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => onModalChange(false)} kind="secondary">

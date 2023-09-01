@@ -6,10 +6,6 @@
   margin: 1.5rem;
 }
 
-.form {
-  display: grid;
-}
-
 .flexContainer {
   display: flex;
   justify-content: space-between;
@@ -28,4 +24,10 @@
   :global(.cds--list-box__menu-icon) {
     height: 1rem;
   }
+}
+
+.backgroundDataFetchingIndicator {
+  align-items: center;
+  display: flex;
+  justify-content: end;
 }
