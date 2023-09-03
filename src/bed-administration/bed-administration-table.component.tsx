@@ -20,13 +20,13 @@ import {
 import { Add, Edit } from "@carbon/react/icons";
 import {
   isDesktop as desktopLayout,
+  useConfig,
   useLayoutType,
   usePagination,
 } from "@openmrs/esm-framework";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import type { InitialData, Location } from "../types";
 import { findBedByLocation, useWards } from "../summary/summary.resource";
-import { LOCATION_TAG_UUID } from "../constants";
 import EditBedForm from "./edit-bed-form.component";
 import Header from "../header/header.component";
 import NewBedForm from "./new-bed-form.component";
@@ -39,6 +39,7 @@ const BedAdministrationTable: React.FC = () => {
   const isTablet = layout === "tablet";
   const responsiveSize = isTablet ? "lg" : "sm";
   const isDesktop = desktopLayout(layout);
+  const { admissionLocationTagUuid } = useConfig();
 
   const [wardsGroupedByLocations, setWardsGroupedByLocation] = useState<
     Array<Location>
@@ -75,8 +76,9 @@ const BedAdministrationTable: React.FC = () => {
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
-  const { data, isLoading, error, isValidating, mutate } =
-    useWards(LOCATION_TAG_UUID);
+  const { data, isLoading, error, isValidating, mutate } = useWards(
+    admissionLocationTagUuid
+  );
 
   const [currentPageSize, setPageSize] = useState(10);
   const pageSizes = [10, 20, 30, 40, 50];

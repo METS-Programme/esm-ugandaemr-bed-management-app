@@ -17,12 +17,12 @@
       "slot": "system-admin-page-card-link-slot"
     },
     {
-      "component": "adminDashboardLink",
+      "component": "adminLeftPanelLink",
       "name": "bed-administration-left-panel-link",
       "slot": "bed-management-left-panel-slot"
     },
     {
-      "component": "homeDashboardLink",
+      "component": "summaryLeftPanelLink",
       "name": "bed-management-home-dashboard-link",
       "slot": "bed-management-left-panel-slot",
       "order": 0

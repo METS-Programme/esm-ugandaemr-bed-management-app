@@ -4,7 +4,7 @@ import {
   getSyncLifecycle,
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
-import { createDashboardLink } from "./create-dashboard-link.component";
+import { createLeftPanelLink } from "./left-panel-link.component";
 
 const moduleName = "@ugandaemr/esm-bed-management-app";
 
@@ -34,16 +34,16 @@ export const adminCardLink = getAsyncLifecycle(
   options
 );
 
-export const homeDashboardLink = getSyncLifecycle(
-  createDashboardLink({
+export const summaryLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
     name: "summary",
     title: "Summary",
   }),
   options
 );
 
-export const adminDashboardLink = getSyncLifecycle(
-  createDashboardLink({
+export const adminLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
     name: "administration",
     title: "Ward Allocation",
   }),

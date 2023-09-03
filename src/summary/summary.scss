@@ -19,9 +19,11 @@
 	text-align: center;
 }
 
-.buttonMain:active, .buttonMain:focus, .buttonMain:hover {
-	color: colors.$teal-60 !important;
-	background-color: colors.$white-0 !important;
+.buttonMain {
+	&:active, &:focus, &:hover {
+		color: colors.$teal-60 !important;
+		background-color: colors.$white-0 !important;
+	}
 }
 
 .inactiveMain {

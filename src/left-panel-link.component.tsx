@@ -1,23 +1,19 @@
 import React, { useMemo } from "react";
 import last from "lodash-es/last";
-import { ConfigurableLink } from "@openmrs/esm-framework";
 import { BrowserRouter, useLocation } from "react-router-dom";
+import { ConfigurableLink } from "@openmrs/esm-framework";
 
-export interface DashboardLinkConfig {
+export interface LinkConfig {
   name: string;
   title: string;
   slot?: string;
 }
 
-function DashboardExtension({
-  dashboardLinkConfig,
-}: {
-  dashboardLinkConfig: DashboardLinkConfig;
-}) {
-  const { name, title } = dashboardLinkConfig;
+function LinkExtension({ config }: { config: LinkConfig }) {
+  const { name, title } = config;
   const location = useLocation();
 
-  let navLink = useMemo(
+  let urlSegment = useMemo(
     () => decodeURIComponent(last(location.pathname.split("/"))),
     [location.pathname]
   );
@@ -28,12 +24,12 @@ function DashboardExtension({
     return regex.test(value);
   };
 
-  if (isUUID(navLink)) {
-    navLink = "summary";
+  if (isUUID(urlSegment)) {
+    urlSegment = "summary";
   }
 
   const activeClassName =
-    name === navLink || (isUUID(navLink) && name === "summary")
+    name === urlSegment || (isUUID(urlSegment) && name === "summary")
       ? "active-left-nav-link"
       : "";
 
@@ -44,7 +40,7 @@ function DashboardExtension({
           name ? `/${name}` : ""
         }`}
         className={`cds--side-nav__link ${
-          name === navLink && "active-left-nav-link"
+          name === urlSegment && "active-left-nav-link"
         }`}
       >
         {title}
@@ -53,10 +49,9 @@ function DashboardExtension({
   );
 }
 
-export const createDashboardLink =
-  (dashboardLinkConfig: DashboardLinkConfig) => () =>
-    (
-      <BrowserRouter>
-        <DashboardExtension dashboardLinkConfig={dashboardLinkConfig} />
-      </BrowserRouter>
-    );
+export const createLeftPanelLink = (config: LinkConfig) => () =>
+  (
+    <BrowserRouter>
+      <LinkExtension config={config} />
+    </BrowserRouter>
+  );

@@ -1,6 +1,5 @@
 import useSWR from "swr";
-import { openmrsFetch } from "@openmrs/esm-framework";
-import { LOCATION_TAG_UUID } from "../constants";
+import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 import { useMemo } from "react";
 
 type MappedBedData = Array<{
@@ -83,7 +82,8 @@ export const findBedByLocation = (locationUuid: string) => {
 };
 
 export function useBedLocations() {
-  const locationsUrl = `/ws/rest/v1/bed?locationUuid=${LOCATION_TAG_UUID}`;
+  const { admissionLocationTagUuid } = useConfig();
+  const locationsUrl = `/ws/rest/v1/bed?locationUuid=${admissionLocationTagUuid}`;
   const { data, error, isLoading } = useSWR<{ data }>(
     locationsUrl,
     openmrsFetch

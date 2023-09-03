@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { setLeftNav, unsetLeftNav } from "@openmrs/esm-framework";
 import BedAdministrationTable from "./bed-administration/bed-administration-table.component";
 import Home from "./home.component";
-import SideMenu from "./left-panel/left-panel.component";
+import LeftPanel from "./left-panel/left-panel.component";
 import WardWithBeds from "./ward-with-beds/ward-with-beds.component";
 import styles from "./root.scss";
 
@@ -20,7 +20,7 @@ const Root: React.FC = () => {
 
   return (
     <BrowserRouter basename={`${window.getOpenmrsSpaBase()}bed-management`}>
-      <SideMenu />
+      <LeftPanel />
       <main className={styles.container}>
         <Routes>
           <Route path="/summary" element={<Home />} />
