@@ -1,13 +1,12 @@
-@use '@carbon/styles/scss/colors';
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use "@carbon/type";
 
 .header {
   @include type.type-style('body-compact-02');
   color: colors.$gray-70;
-  height: spacing.$spacing-12;
-  background-color: $ui-02;
+  height: layout.$spacing-12;
+  background-color: colors.$white-0;
   display: flex;
   padding-left: 8px;
   justify-content: space-between;

@@ -1,8 +1,8 @@
-@use '@carbon/styles/scss/spacing';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
 
 .cardContainer {
-	background-color: $ui-02;
+	background-color: colors.$white-0;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	justify-content: space-between;
@@ -10,8 +10,8 @@
 }
 
 .buttonMain {
-	background-color: $ui-02;
-	color: #007d79;
+	background-color: colors.$white-0;
+	color: colors.$teal-60;
 	cursor: text;
 }
 
@@ -20,8 +20,8 @@
 }
 
 .buttonMain:active, .buttonMain:focus, .buttonMain:hover {
-	color: #007d79 !important;
-	background-color: #fff !important;
+	color: colors.$teal-60 !important;
+	background-color: colors.$white-0 !important;
 }
 
 .inactiveMain {
@@ -40,7 +40,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: spacing.$spacing-05;
+	padding: layout.$spacing-05;
 	background-color: #ededed;
 }
 
@@ -58,10 +58,10 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  color: $interactive-01;
+  color: colors.$blue-60;
 
   svg {
-    margin-left: spacing.$spacing-03;
+    margin-left: layout.$spacing-03;
   }
 }
 

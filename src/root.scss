@@ -1,8 +1,8 @@
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
+@use '@carbon/colors';
+@use "@carbon/type";
 
 .container {
-  background-color: white;
+  background-color: colors.$white-0;
   height: calc(100vh - 3rem);
 }
 

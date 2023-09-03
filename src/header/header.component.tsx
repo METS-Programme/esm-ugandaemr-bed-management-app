@@ -6,7 +6,7 @@ import {
 } from "@openmrs/esm-framework";
 import { useTranslation } from "react-i18next";
 import { Calendar, Location } from "@carbon/react/icons";
-import Illustration from "./illo";
+import Illustration from "./illustration.component";
 import styles from "./header.scss";
 
 type HeaderProps = {

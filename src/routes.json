@@ -12,18 +12,19 @@
   ],
   "extensions": [
     {
-      "name": "bed-administration-dashboard-link",
-      "slot": "bed-management-nav-menu-slot",
-      "component": "adminDashboardLink"
-    },
-    {
+      "component": "adminCardLink",
       "name": "bed-management-admin-card-link",
-      "slot": "system-admin-page-card-link-slot",
-      "component": "adminCardLink"
+      "slot": "system-admin-page-card-link-slot"
     },
     {
-      "name": "home-page-dashboard-link", 
-      "slot": "bed-management-nav-menu-slot", "component": "homeDashboardLink",
+      "component": "adminDashboardLink",
+      "name": "bed-administration-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
+      "component": "homeDashboardLink",
+      "name": "bed-management-home-dashboard-link",
+      "slot": "bed-management-left-panel-slot",
       "order": 0
     }
   ]

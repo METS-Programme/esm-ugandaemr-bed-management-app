@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { setLeftNav, unsetLeftNav } from "@openmrs/esm-framework";
 import BedAdministration from "./bed-administration/bed-administration-table.component";
 import Home from "./home.component";
-import SideMenu from "./side-nav/side-nav.component";
+import SideMenu from "./left-panel/left-panel.component";
 import WardWithBeds from "./ward-with-beds/ward-with-beds.component";
 import styles from "./root.scss";
 
@@ -12,10 +12,10 @@ const Root: React.FC = () => {
 
   useEffect(() => {
     setLeftNav({
-      name: "bed-management-nav-menu-slot",
+      name: "bed-management-left-panel-slot",
       basePath: spaBasePath,
     });
-    return () => unsetLeftNav("bed-management-nav-menu-slot");
+    return () => unsetLeftNav("bed-management-left-panel-slot");
   }, [spaBasePath]);
 
   return (
