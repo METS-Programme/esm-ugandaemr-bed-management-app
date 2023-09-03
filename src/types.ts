@@ -109,6 +109,6 @@ export interface InitialData {
 
 export type Mutator = KeyedMutator<{
   data: {
-    results: Array<any>;
+    results: Array<Location>;
   };
 }>;

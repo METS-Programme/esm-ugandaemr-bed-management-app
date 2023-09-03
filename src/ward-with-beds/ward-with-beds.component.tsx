@@ -15,11 +15,11 @@ import {
 } from "@carbon/react";
 import { ArrowLeft } from "@carbon/react/icons";
 import { navigate, usePagination } from "@openmrs/esm-framework";
+import Header from "../header/header.component";
 import {
   useBedsForLocation,
   useLocationName,
 } from "../summary/summary.resource";
-import Header from "../header/header.component";
 import styles from "./ward-with-beds.scss";
 
 type RouteParams = { location: string };

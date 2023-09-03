@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
 import type { BedType, InitialData } from "../types";
 
-interface BedFormProps {
+interface BedAdministrationFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
   availableBedTypes: Array<BedType>;
@@ -33,7 +33,7 @@ interface BedFormProps {
   initialData: InitialData;
 }
 
-const BedAdministrationForm: React.FC<BedFormProps> = ({
+const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
   showModal,
   onModalChange,
   availableBedTypes,
@@ -42,7 +42,7 @@ const BedAdministrationForm: React.FC<BedFormProps> = ({
   headerTitle,
   occupancyStatuses,
   initialData,
-}: BedFormProps) => {
+}) => {
   const { t } = useTranslation();
 
   const [bedLabel, setBedIdLabel] = useState(initialData.bedNumber);

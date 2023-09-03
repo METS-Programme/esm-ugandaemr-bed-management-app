@@ -10,14 +10,14 @@ import type { InitialData, Mutator } from "../types";
 import { useBedType, editBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
 
-interface NewBedFormProps {
+interface EditBedFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
   editData: InitialData;
   mutate: Mutator;
 }
 
-const EditBedForm: React.FC<NewBedFormProps> = ({
+const EditBedForm: React.FC<EditBedFormProps> = ({
   showModal,
   onModalChange,
   editData,

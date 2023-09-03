@@ -1,6 +1,6 @@
+import { useMemo } from "react";
 import useSWR from "swr";
 import { FetchResponse, openmrsFetch } from "@openmrs/esm-framework";
-import { useMemo } from "react";
 
 interface BedForm {
   bedNumber: string;

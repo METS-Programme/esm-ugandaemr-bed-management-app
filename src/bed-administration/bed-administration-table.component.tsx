@@ -19,8 +19,8 @@ import {
 } from "@carbon/react";
 import { Add, Edit } from "@carbon/react/icons";
 import {
-  useLayoutType,
   isDesktop as desktopLayout,
+  useLayoutType,
   usePagination,
 } from "@openmrs/esm-framework";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
@@ -32,7 +32,7 @@ import Header from "../header/header.component";
 import NewBedForm from "./new-bed-form.component";
 import styles from "./bed-administration-table.scss";
 
-const BedAdminstration: React.FC = () => {
+const BedAdministrationTable: React.FC = () => {
   const { t } = useTranslation();
   const headerTitle = t("wardAllocation", "Ward Allocation");
   const layout = useLayoutType();
@@ -313,9 +313,8 @@ const BedAdminstration: React.FC = () => {
           )}
         </DataTable>
       </div>
-      {/* {tableRows?.length && !isBedDataLoading ? ( */}
     </>
   );
 };
 
-export default BedAdminstration;
+export default BedAdministrationTable;
