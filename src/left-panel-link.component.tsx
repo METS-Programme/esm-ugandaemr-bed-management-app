@@ -6,7 +6,6 @@ import { ConfigurableLink } from "@openmrs/esm-framework";
 export interface LinkConfig {
   name: string;
   title: string;
-  slot?: string;
 }
 
 function LinkExtension({ config }: { config: LinkConfig }) {
@@ -28,24 +27,17 @@ function LinkExtension({ config }: { config: LinkConfig }) {
     urlSegment = "summary";
   }
 
-  const activeClassName =
-    name === urlSegment || (isUUID(urlSegment) && name === "summary")
-      ? "active-left-nav-link"
-      : "";
-
   return (
-    <div className={activeClassName}>
-      <ConfigurableLink
-        to={`${window.getOpenmrsSpaBase()}bed-management${
-          name ? `/${name}` : ""
-        }`}
-        className={`cds--side-nav__link ${
-          name === urlSegment && "active-left-nav-link"
-        }`}
-      >
-        {title}
-      </ConfigurableLink>
-    </div>
+    <ConfigurableLink
+      to={`${window.getOpenmrsSpaBase()}bed-management${
+        name ? `/${name}` : ""
+      }`}
+      className={`cds--side-nav__link ${
+        name === urlSegment && "active-left-nav-link"
+      }`}
+    >
+      {title}
+    </ConfigurableLink>
   );
 }
 
