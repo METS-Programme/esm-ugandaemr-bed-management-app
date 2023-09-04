@@ -1,11 +1,16 @@
 <!-- PROJECT LOGO -->
 <p align="center">
-  <h3 align="center">UgandaEMR Bed Management app</h3>
+  <img src="https://github.com/METS-Programme/esm-ugandaemr-bed-management-app/blob/f2688457f8e2e8c3e28c61bc83bb4e83f95b3e45/src/assets/logo.svg" alt="UgandaEMR+ logo" />
+
+  
+  <h3 align="center">Bed Management app</h3>
 
   <p align="center">
     A frontend module for managing beds in a facility.
   </p>
 </p>
+
+ <img src="https://github.com/METS-Programme/esm-ugandaemr-bed-management-app/blob/f2688457f8e2e8c3e28c61bc83bb4e83f95b3e45/src/assets/landing-page.png" alt="Bed management app landing page" />
 
 <!-- GETTING STARTED -->
 
