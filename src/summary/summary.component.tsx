@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { DataTableSkeleton } from "@carbon/react";
 import { ArrowRight } from "@carbon/react/icons";
-import { getBedsForLocation, useLocationsByTag } from "./summary.resource";
+import {
+  getBedsForLocation,
+  useAdmissionLocations,
+  useLocationsByTag,
+} from "./summary.resource";
 import { useTranslation } from "react-i18next";
 import { ConfigurableLink, useConfig } from "@openmrs/esm-framework";
 import EmptyState from "../empty-state/empty-state.component";
@@ -10,40 +14,9 @@ import styles from "./summary.scss";
 
 const Summary: React.FC = () => {
   const { t } = useTranslation();
-  const { admissionLocationTagUuid } = useConfig();
+  const { data: admissionLocations, isLoading } = useAdmissionLocations();
 
-  const [bedsForLocation, setBedsForLocation] = useState([]);
-  const [isLoadingBedData, setIsLoadingBedData] = useState(true);
-  const { data, isLoading } = useLocationsByTag(admissionLocationTagUuid);
-
-  useEffect(() => {
-    if (!isLoading && data) {
-      const fetchData = async () => {
-        const promises = data.map(async (ward) => {
-          try {
-            const bedData = await getBedsForLocation(ward.uuid);
-            return {
-              ...ward,
-              beds: bedData,
-            };
-          } catch (error) {
-            return {
-              ...ward,
-              beds: [],
-            };
-          }
-        });
-
-        const bedsForLocation = await Promise.all(promises);
-        setBedsForLocation(bedsForLocation);
-        setIsLoadingBedData(false);
-      };
-
-      fetchData();
-    }
-  }, [data, isLoading]);
-
-  if (isLoadingBedData) {
+  if (isLoading) {
     return (
       <div className={styles.loader}>
         <DataTableSkeleton role="progressbar" zebra />
@@ -51,21 +24,21 @@ const Summary: React.FC = () => {
     );
   }
 
-  if (bedsForLocation?.length) {
+  if (admissionLocations?.length) {
     return (
       <div className={styles.cardContainer}>
-        {bedsForLocation.map((locationWithBeds) => {
+        {admissionLocations.map((locationWithBeds) => {
           const routeSegment = `${window.getOpenmrsSpaBase()}bed-management/location/${
-            locationWithBeds.uuid
+            locationWithBeds.ward.uuid
           }`;
 
           return (
             <WardCard
-              headerLabel={locationWithBeds.display}
+              headerLabel={locationWithBeds.ward.display}
               label={t("beds", "Beds")}
-              value={locationWithBeds?.beds?.length}
+              value={locationWithBeds?.totalBeds}
             >
-              {locationWithBeds?.beds?.length ? (
+              {locationWithBeds?.totalBeds ? (
                 <div className={styles.link}>
                   <ConfigurableLink className={styles.link} to={routeSegment}>
                     {t("viewBeds", "View beds")}
@@ -80,7 +53,7 @@ const Summary: React.FC = () => {
     );
   }
 
-  if (!isLoadingBedData && bedsForLocation?.length === 0) {
+  if (!isLoading && admissionLocations?.length === 0) {
     return <EmptyState msg="No data to display" helper={""} />;
   }
 };

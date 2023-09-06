@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableBody,
   TableCell,
+  Tag,
 } from "@carbon/react";
 import { ArrowLeft } from "@carbon/react/icons";
 import { navigate, usePagination } from "@openmrs/esm-framework";
@@ -21,6 +22,7 @@ import {
   useLocationName,
 } from "../summary/summary.resource";
 import styles from "./ward-with-beds.scss";
+import { useTranslation } from "react-i18next";
 
 type RouteParams = { location: string };
 
@@ -64,14 +66,36 @@ const WardWithBeds: React.FC = () => {
     },
     {
       id: 4,
-      header: "Status",
-      key: "status",
+      header: "Occupied",
+      key: "occupied",
     },
   ];
 
+  const CustomTag = ({ condition }: { condition: boolean }) => {
+    const { t } = useTranslation();
+
+    if (condition) {
+      return (
+        <Tag type="green" size="md" title="Yes tag">
+          {t("yes", "Yes")}
+        </Tag>
+      );
+    }
+
+    return (
+      <Tag type="red" size="md" title="No tag">
+        {t("no", "No")}
+      </Tag>
+    );
+  };
+
   const tableRows = useMemo(() => {
     return paginatedData?.map((bed) => ({
-      ...bed,
+      id: bed.id,
+      number: bed.number,
+      name: bed.name,
+      description: bed.description,
+      occupied: <CustomTag condition={bed?.status === "OCCUPIED"} />,
     }));
   }, [paginatedData]);
 

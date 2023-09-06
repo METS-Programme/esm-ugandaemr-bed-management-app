@@ -49,7 +49,6 @@ const BedAdministrationTable: React.FC = () => {
   const [showEditBedModal, setShowEditBedModal] = useState(false);
   const [editData, setEditData] = useState<InitialData>();
   const [filterOption, setFilterOption] = useState("ALL");
-  const [refetchBedData, setRefetchBedData] = useState(false);
 
   function CustomTag({ condition }: { condition: boolean }) {
     const { t } = useTranslation();
@@ -90,10 +89,7 @@ const BedAdministrationTable: React.FC = () => {
   );
 
   useEffect(() => {
-    if (
-      (!isLoading && data && !wardsGroupedByLocations.length) ||
-      refetchBedData
-    ) {
+    if (!isLoading && data) {
       setIsBedDataLoading(true);
       const fetchData = async () => {
         const promises = data.data.results.map(async (ward) => {
@@ -111,10 +107,9 @@ const BedAdministrationTable: React.FC = () => {
         setWardsGroupedByLocation(updatedWards);
         setIsBedDataLoading(false);
       };
-      setRefetchBedData(false);
       fetchData().finally(() => setIsBedDataLoading(false));
     }
-  }, [data, isLoading, refetchBedData, wardsGroupedByLocations.length]);
+  }, [data, isLoading, wardsGroupedByLocations.length]);
 
   const tableHeaders = [
     {
@@ -168,7 +163,7 @@ const BedAdministrationTable: React.FC = () => {
     }));
   }, [responsiveSize, results, t]);
 
-  if (isBedDataLoading || isLoading) {
+  if ((isBedDataLoading || isLoading) && !wardsGroupedByLocations.length) {
     return (
       <>
         <Header route="Ward Allocation" />

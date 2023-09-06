@@ -111,3 +111,19 @@ export const useWards = (locationUuid: string) => {
     mutate,
   };
 };
+
+export const useAdmissionLocations = () => {
+  const locationsUrl = `/ws/rest/v1/admissionLocation`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(locationsUrl, openmrsFetch);
+
+  return {
+    data: data?.data?.results ?? [],
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  };
+};
