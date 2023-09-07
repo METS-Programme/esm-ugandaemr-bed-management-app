@@ -112,3 +112,22 @@ export type Mutator = KeyedMutator<{
     results: Array<Location>;
   };
 }>;
+
+export type AdmissionLocation = {
+  ward: {
+    uuid: string;
+    display: string;
+    name: string;
+    description: string;
+  };
+  totalBeds: number;
+  occupiedBeds: number;
+};
+
+export type MappedBedData = Array<{
+  id: number;
+  number: string;
+  name: string;
+  description: string;
+  status: string;
+}>;

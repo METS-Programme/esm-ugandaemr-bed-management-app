@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   DataTable,
@@ -12,6 +13,7 @@ import {
   TableHeader,
   TableBody,
   TableCell,
+  Tag,
 } from "@carbon/react";
 import { ArrowLeft } from "@carbon/react/icons";
 import { navigate, usePagination } from "@openmrs/esm-framework";
@@ -64,14 +66,36 @@ const WardWithBeds: React.FC = () => {
     },
     {
       id: 4,
-      header: "Status",
-      key: "status",
+      header: "Occupied",
+      key: "occupied",
     },
   ];
 
+  const CustomTag = ({ condition }: { condition: boolean }) => {
+    const { t } = useTranslation();
+
+    if (condition) {
+      return (
+        <Tag type="green" size="md">
+          {t("yes", "Yes")}
+        </Tag>
+      );
+    }
+
+    return (
+      <Tag type="red" size="md">
+        {t("no", "No")}
+      </Tag>
+    );
+  };
+
   const tableRows = useMemo(() => {
     return paginatedData?.map((bed) => ({
-      ...bed,
+      id: bed.id,
+      number: bed.number,
+      name: bed.name,
+      description: bed.description,
+      occupied: <CustomTag condition={bed?.status === "OCCUPIED"} />,
     }));
   }, [paginatedData]);
 
