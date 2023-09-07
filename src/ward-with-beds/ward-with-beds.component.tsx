@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   DataTable,
@@ -22,7 +23,6 @@ import {
   useLocationName,
 } from "../summary/summary.resource";
 import styles from "./ward-with-beds.scss";
-import { useTranslation } from "react-i18next";
 
 type RouteParams = { location: string };
 
@@ -76,14 +76,14 @@ const WardWithBeds: React.FC = () => {
 
     if (condition) {
       return (
-        <Tag type="green" size="md" title="Yes tag">
+        <Tag type="green" size="md">
           {t("yes", "Yes")}
         </Tag>
       );
     }
 
     return (
-      <Tag type="red" size="md" title="No tag">
+      <Tag type="red" size="md">
         {t("no", "No")}
       </Tag>
     );

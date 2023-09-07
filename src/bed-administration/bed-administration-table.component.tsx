@@ -55,14 +55,14 @@ const BedAdministrationTable: React.FC = () => {
 
     if (condition) {
       return (
-        <Tag type="green" size="md" title="Yes tag">
+        <Tag type="green" size="md">
           {t("yes", "Yes")}
         </Tag>
       );
     }
 
     return (
-      <Tag type="red" size="md" title="No tag">
+      <Tag type="red" size="md">
         {t("no", "No")}
       </Tag>
     );

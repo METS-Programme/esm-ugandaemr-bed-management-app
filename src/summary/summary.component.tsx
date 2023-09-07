@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DataTableSkeleton } from "@carbon/react";
 import { ArrowRight } from "@carbon/react/icons";
-import {
-  getBedsForLocation,
-  useAdmissionLocations,
-  useLocationsByTag,
-} from "./summary.resource";
 import { useTranslation } from "react-i18next";
-import { ConfigurableLink, useConfig } from "@openmrs/esm-framework";
+import { ConfigurableLink } from "@openmrs/esm-framework";
+import { useAdmissionLocations } from "./summary.resource";
 import EmptyState from "../empty-state/empty-state.component";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
@@ -27,18 +23,18 @@ const Summary: React.FC = () => {
   if (admissionLocations?.length) {
     return (
       <div className={styles.cardContainer}>
-        {admissionLocations.map((locationWithBeds) => {
+        {admissionLocations.map((admissionLocation) => {
           const routeSegment = `${window.getOpenmrsSpaBase()}bed-management/location/${
-            locationWithBeds.ward.uuid
+            admissionLocation.ward.uuid
           }`;
 
           return (
             <WardCard
-              headerLabel={locationWithBeds.ward.display}
+              headerLabel={admissionLocation.ward.display}
               label={t("beds", "Beds")}
-              value={locationWithBeds?.totalBeds}
+              value={admissionLocation?.totalBeds}
             >
-              {locationWithBeds?.totalBeds ? (
+              {admissionLocation?.totalBeds ? (
                 <div className={styles.link}>
                   <ConfigurableLink className={styles.link} to={routeSegment}>
                     {t("viewBeds", "View beds")}

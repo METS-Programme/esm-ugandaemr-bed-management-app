@@ -1,14 +1,6 @@
 import useSWR from "swr";
-import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
-import { useMemo } from "react";
-
-type MappedBedData = Array<{
-  id: number;
-  number: string;
-  name: string;
-  description: string;
-  status: string;
-}>;
+import { openmrsFetch } from "@openmrs/esm-framework";
+import type { AdmissionLocation, Bed, MappedBedData } from "../types";
 
 export const useLocationsByTag = (locationUuid: string) => {
   const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
@@ -38,10 +30,10 @@ export const getBedsForLocation = (locationUuid: string) => {
 export const useBedsForLocation = (locationUuid: string) => {
   const apiUrl = `/ws/rest/v1/bed?locationUuid=${locationUuid}&v=full`;
 
-  const { data, isLoading, error } = useSWR<{ data }, Error>(
-    locationUuid ? apiUrl : null,
-    openmrsFetch
-  );
+  const { data, isLoading, error } = useSWR<
+    { data: { results: Array<Bed> } },
+    Error
+  >(locationUuid ? apiUrl : null, openmrsFetch);
 
   const mappedBedData: MappedBedData = (data?.data?.results ?? []).map(
     (bed) => ({
@@ -81,21 +73,6 @@ export const findBedByLocation = (locationUuid: string) => {
   });
 };
 
-export function useBedLocations() {
-  const { admissionLocationTagUuid } = useConfig();
-  const locationsUrl = `/ws/rest/v1/bed?locationUuid=${admissionLocationTagUuid}`;
-  const { data, error, isLoading } = useSWR<{ data }>(
-    locationsUrl,
-    openmrsFetch
-  );
-
-  const bedLocations = useMemo(
-    () => data?.data?.results?.map((response) => response.resource) ?? [],
-    [data?.data?.results]
-  );
-  return { bedLocations: bedLocations ? bedLocations : [], isLoading, error };
-}
-
 export const useWards = (locationUuid: string) => {
   const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
   const { data, error, isLoading, isValidating, mutate } = useSWR<
@@ -115,7 +92,7 @@ export const useWards = (locationUuid: string) => {
 export const useAdmissionLocations = () => {
   const locationsUrl = `/ws/rest/v1/admissionLocation`;
   const { data, error, isLoading, isValidating, mutate } = useSWR<
-    { data },
+    { data: { results: Array<AdmissionLocation> } },
     Error
   >(locationsUrl, openmrsFetch);
 
