@@ -5,6 +5,7 @@ import {
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
+import { createDashboardLink } from "./bed-admission/createDashboardLink";
 
 const moduleName = "@ugandaemr/esm-bed-management-app";
 
@@ -29,6 +30,11 @@ export const root = getAsyncLifecycle(
   options
 );
 
+export const bedAdmission = getAsyncLifecycle(
+  () => import("./bed-admission/bed-admission.component"),
+  options
+);
+
 export const adminCardLink = getAsyncLifecycle(
   () => import("./admin-card-link.component"),
   options
@@ -46,6 +52,14 @@ export const adminLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
     name: "administration",
     title: "Ward Allocation",
+  }),
+  options
+);
+
+export const bedAdmissionDashboardLink = getSyncLifecycle(
+  createDashboardLink({
+    name: "bed-admission",
+    title: "Bed admission",
   }),
   options
 );

@@ -130,4 +130,5 @@ export type MappedBedData = Array<{
   name: string;
   description: string;
   status: string;
+  uuid: string;
 }>;

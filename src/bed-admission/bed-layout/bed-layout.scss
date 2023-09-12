@@ -1,0 +1,50 @@
+@use '@carbon/type';
+@use '@carbon/colors';
+@use '@carbon/styles/scss/spacing';
+@import '~@openmrs/esm-styleguide/src/vars';
+
+.bedLayout {
+  position: relative;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1px solid #42be65;
+
+  .bedPillow {
+    background-color: #fff;
+    border-radius: 3rem;
+    border: 1px solid #42be65;
+  }
+
+  .bedNumber {
+    // color: #fff;
+    font-weight: bold;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.bedInfoMain {
+  display: flex;
+  align-self: center;
+}
+.bedInfoContainer {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 4rem;
+  border-bottom: 1px solid #a8a8a8;
+}
+.bedInfoText {
+  align-self: center;
+}
+
+.disabled {
+  opacity: 0.8;
+  pointer-events: none;
+}
