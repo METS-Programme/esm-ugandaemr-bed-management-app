@@ -1,12 +1,12 @@
-import React from 'react'
-import ActivePatientsTable from '../active-patients/active-patients-table.component'
+import React from "react";
+import ActivePatientsTable from "../active-patients/active-patients-table.component";
 
-const  DischargedPatientsList: React.FC = () => {
+const DischargedPatientsList: React.FC = () => {
   return (
     <>
-    <ActivePatientsTable status="" />
+      <ActivePatientsTable status="" />
     </>
-  )
-}
+  );
+};
 
-export default DischargedPatientsList
+export default DischargedPatientsList;

@@ -191,7 +191,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
         ),
       },
     }));
-  }, [paginatedQueueEntries, t, handleBedAssigmentModal]);
+  }, [paginatedQueueEntries, status, t, handleBedAssigmentModal]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;

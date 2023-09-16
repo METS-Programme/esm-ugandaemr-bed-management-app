@@ -14,9 +14,7 @@ const BedAdmissionTabs: React.FC = () => {
         <TabList contained fullWidth className={styles.tabsContainer}>
           <Tab className={styles.tab}>{t("toAdmit", "To Admit")}</Tab>
           <Tab className={styles.tab}>{t("admitted", "Admitted")}</Tab>
-          <Tab className={styles.tab}>
-            {t("discharged", "Discharged")}
-          </Tab>
+          <Tab className={styles.tab}>{t("discharged", "Discharged")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>

@@ -1,10 +1,5 @@
 import React, { useCallback, useState } from "react";
-import {
-  Stack,
-  Grid,
-  ButtonSet,
-  Button,
-} from "@carbon/react";
+import { Stack, Grid, ButtonSet, Button } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { useLayoutType } from "@openmrs/esm-framework";
 import styles from "./allocate-bed.scss";
