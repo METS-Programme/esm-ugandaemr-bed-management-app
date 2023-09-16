@@ -1,5 +1,4 @@
 import {
-  Button,
   DataTable,
   DataTableSkeleton,
   DefinitionTooltip,
@@ -13,7 +12,6 @@ import {
   TableRow,
   Tag,
 } from "@carbon/react";
-import { HospitalBed } from "@carbon/react/icons";
 
 import {
   isDesktop,
@@ -33,6 +31,7 @@ import styles from "./styles.scss";
 import { usePatientQueuesList } from "./patient-queues.resource";
 import EmptyState from "../../empty-state/empty-state.component";
 import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component";
+import AdmissionActionButton from "./admission-action-button.component";
 
 interface ActiveVisitsTableProps {
   status: string;
@@ -175,15 +174,19 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
       actions: {
         content: (
           <>
-            <Button
-              className={styles.actionButton}
-              kind="ghost"
-              renderIcon={HospitalBed}
-              onClick={() => handleBedAssigmentModal(entry)}
-              iconDescription={t("assignBed", "Assign Bed")}
-            >
-              {t("assignBed", "Assign Bed")}
-            </Button>
+            {status === "pending" ? (
+              <AdmissionActionButton
+                entry={entry}
+                handleBedAssigmentModal={handleBedAssigmentModal}
+                buttonText={"Assign Bed"}
+              />
+            ) : status === "active" ? (
+              <AdmissionActionButton
+                entry={entry}
+                handleBedAssigmentModal={handleBedAssigmentModal}
+                buttonText={"Discharge"}
+              />
+            ) : null}
           </>
         ),
       },

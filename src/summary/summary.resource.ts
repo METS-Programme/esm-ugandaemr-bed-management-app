@@ -75,7 +75,7 @@ export const findBedByLocation = (locationUuid: string) => {
 };
 
 export const useWards = (locationUuid: string) => {
-  const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
+  const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;  
   const { data, error, isLoading, isValidating, mutate } = useSWR<
     { data },
     Error
