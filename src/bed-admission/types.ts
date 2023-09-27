@@ -53,7 +53,9 @@ export interface PatientQueue {
   };
   locationFrom: QueueLocation;
   locationTo: QueueLocation;
-  // encounter: string; // TODO add encounter type
+  encounter: {
+    uuid: string;
+  };
   status: string; // TODO add status enum
   priority: number; // TODO add priority enum
   priorityComment: string;
@@ -116,4 +118,16 @@ export interface QueueRoom {
 export interface UuidDisplay {
   uuid: string;
   display: string;
+}
+
+export interface patientDetailsProps {
+  name: string;
+  patientUuid: string;
+  encounter: {
+    uuid: string;
+  };
+  locationUuid: string;
+  locationTo: string;
+  locationFrom: string;
+  queueUuid: string;
 }

@@ -29,10 +29,19 @@
   }
 }
 
+.bedLayoutSelected {
+  background-color: #42be65 !important;
+  color: #fff !important;
+  border: 5px solid #e4e1c9 !important;
+}
+
+;
+
 .bedInfoMain {
   display: flex;
   align-self: center;
 }
+
 .bedInfoContainer {
   margin-top: 3rem;
   display: flex;
@@ -40,6 +49,7 @@
   padding-right: 4rem;
   border-bottom: 1px solid #a8a8a8;
 }
+
 .bedInfoText {
   align-self: center;
 }
@@ -52,4 +62,53 @@
 .errorContainer {
   width: 90%;
   position: absolute;
+}
+
+.bed {
+  height: 60px;
+  width: 8rem;
+}
+
+.pillow {
+  width: 10px;
+  height: 40px;
+}
+
+.available {
+  background-color: #fff;
+  color: #525252;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.occupied {
+  background-color: #42be65;
+  color: #fff;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.minOccupied {
+  height: 1.5rem;
+  width: 2.5rem;
+  color: #fff;
+  background-color: rgb(66, 190, 101);
+  padding: 0 6px;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.minAvailable {
+  height: 1.5rem;
+  width: 2.5rem;
+  color: none;
+  background-color: #fff;
+  padding: 0 6px;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.minPillow {
+  width: 7px;
+  height: 1rem;
 }

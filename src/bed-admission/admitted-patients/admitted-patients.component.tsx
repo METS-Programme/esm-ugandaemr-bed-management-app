@@ -4,7 +4,7 @@ import ActivePatientsTable from "../active-patients/active-patients-table.compon
 const AdmittedPatientsList: React.FC = () => {
   return (
     <>
-      <ActivePatientsTable status="active" />
+      <ActivePatientsTable status="completed" />
     </>
   );
 };

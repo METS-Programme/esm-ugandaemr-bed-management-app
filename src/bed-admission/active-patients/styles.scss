@@ -15,7 +15,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
   background-color: $ui-background;
 }
 
@@ -237,7 +236,6 @@
 
 .headerBtnContainer {
   background-color: $ui-background;
-  padding: spacing.$spacing-05;
   text-align: right;
 }
 

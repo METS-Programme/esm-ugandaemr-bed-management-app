@@ -1,20 +1,36 @@
 import React, { useCallback, useState } from "react";
+import classNames from "classnames";
 import { Stack, Grid, ButtonSet, Button } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import { useLayoutType } from "@openmrs/esm-framework";
+import {
+  showNotification,
+  showToast,
+  useLayoutType,
+} from "@openmrs/esm-framework";
 import styles from "./allocate-bed.scss";
 import Overlay from "./overlay.component";
 import { useBedsForLocation } from "../summary/summary.resource";
-import { assignPatientBed } from "../bed-admission/bed-admission.resource";
+import {
+  assignPatientBed,
+  endPatientQueue,
+} from "../bed-admission/bed-admission.resource";
 import MinBedLayout from "../bed-admission/bed-layout/min-bed-layout.component";
 import BedLayoutList from "../bed-admission/bed-layout/bed-layout-list.component";
+import LocationComboBox from "../bed-admission/admitted-patients/location-combo-box.component";
 
 interface WorkSpaceProps {
-  closePanel: () => void;
+  closePanel: (e: boolean) => void;
   headerTitle?: string;
+  queueStatus: string;
   patientDetails: {
     name: string;
     patientUuid: string;
+    locationUuid: string;
+    locationTo: string;
+    queueUuid: string;
+    encounter: {
+      uuid: string;
+    };
   };
 }
 
@@ -30,31 +46,72 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
   headerTitle,
   closePanel,
   patientDetails,
+  queueStatus,
 }) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
   const [selectedBed, setSelectedBed] = useState<BedProps>();
-  const casualityWard = "062c1e31-7ebb-497a-bd68-ecea4387f808";
-  const { isLoading, bedData, error } = useBedsForLocation(casualityWard);
+  const [isBedAssigned, setIsBedAssigned] = useState(false);
+  const [isQueueEnded, setIsQueueEnded] = useState(false);
+  const [locationUuid, setLocation] = useState(patientDetails.locationUuid);
+  const { isLoading, bedData, error } = useBedsForLocation(locationUuid);
 
   const handleClick = (bed) => {
     setSelectedBed(bed);
   };
 
+  if (isBedAssigned) {
+    endPatientQueue({ status: "completed" }, patientDetails.queueUuid)
+      .then(() => setIsQueueEnded(true))
+      .catch((error) => {
+        showNotification({
+          title: t("errorEndingQueue", "Error Ending Queve"),
+          kind: "error",
+          critical: true,
+          description: error?.message,
+        });
+      });
+  }
+
+  if (isQueueEnded) {
+    showToast({
+      title: t("bedAssigned", "Bed Assigned"),
+      kind: "success",
+      critical: true,
+      description: `Bed ${selectedBed.number} was assigned to ${patientDetails.name} successfully.`,
+    });
+    closePanel(false);
+  }
+
   const handleAssignBedToPatient = useCallback(() => {
     const patientAndEncounterUuids = {
-      encounterUuid: "",
+      encounterUuid: patientDetails?.encounter?.uuid,
       patientUuid: patientDetails.patientUuid,
     };
-    assignPatientBed(patientAndEncounterUuids, selectedBed.id);
-  }, [patientDetails, selectedBed]);
+
+    assignPatientBed(patientAndEncounterUuids, selectedBed.id)
+      .then(() => setIsBedAssigned(true))
+      .catch((error) => {
+        showNotification({
+          title: t("errorAssigningBed", "Error assigning bed"),
+          kind: "error",
+          critical: true,
+          description: error?.message,
+        });
+      });
+  }, [patientDetails, selectedBed, t]);
 
   return (
     <>
-      <Overlay header={headerTitle} closePanel={closePanel}>
+      <Overlay header={headerTitle} closePanel={() => closePanel(false)}>
         <div className={styles.container}>
           <MinBedLayout />
           <Stack gap={8} className={styles.container}>
+            {queueStatus !== "completed" ? (
+              ""
+            ) : (
+              <LocationComboBox setLocationUuid={setLocation} />
+            )}
             <section className={styles.section}>
               <Grid>
                 {" "}
@@ -63,6 +120,7 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
                   error={error}
                   bedData={bedData}
                   handleClick={handleClick}
+                  patientDetails={patientDetails}
                 />{" "}
               </Grid>
             </section>
@@ -73,7 +131,7 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
             {" "}
             {t(
               "admittingPatientToBedText",
-              `Admitting ${patientDetails.name} to bed ${selectedBed.number} - click save button to continue`
+              `Click Save button to admit patient to Bed ${selectedBed.number}`
             )}
           </span>
         )}
@@ -87,7 +145,9 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
           </Button>
           <Button
             onClick={handleAssignBedToPatient}
-            className={styles.button}
+            className={classNames(styles.button, {
+              [styles.disabled]: !bedData.length,
+            })}
             kind="primary"
             type="submit"
           >

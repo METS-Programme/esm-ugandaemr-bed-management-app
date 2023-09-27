@@ -9,7 +9,7 @@ import DischargedPatientsList from "./discharged-patients/discharged-patients.co
 const BedAdmissionTabs: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div>
+    <div className={styles.container}>
       <Tabs>
         <TabList contained fullWidth className={styles.tabsContainer}>
           <Tab className={styles.tab}>{t("toAdmit", "To Admit")}</Tab>

@@ -11,6 +11,10 @@ import {
   TableHeader,
   TableRow,
   Tag,
+  Layer,
+  TableToolbar,
+  TableToolbarContent,
+  TableToolbarSearch,
 } from "@carbon/react";
 
 import {
@@ -32,15 +36,10 @@ import { usePatientQueuesList } from "./patient-queues.resource";
 import EmptyState from "../../empty-state/empty-state.component";
 import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component";
 import AdmissionActionButton from "./admission-action-button.component";
+import { patientDetailsProps } from "../types";
 
 interface ActiveVisitsTableProps {
   status: string;
-}
-
-interface patientDetailsProps {
-  name: string;
-  patientUuid: string;
-  encounter: string;
 }
 
 const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
@@ -58,14 +57,21 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
 
   const layout = useLayoutType();
 
-  const handleBedAssigmentModal = useCallback((entry) => {
-    setSelectedPatientDetails({
-      name: entry.name,
-      patientUuid: entry.patientUuid,
-      encounter: entry.encounter,
-    });
-    setShowOverlay(true);
-  }, []);
+  const handleBedAssigmentModal = useCallback(
+    (entry) => {
+      setSelectedPatientDetails({
+        name: entry.name,
+        patientUuid: entry.patientUuid,
+        encounter: entry.encounter,
+        locationUuid: session?.sessionLocation?.uuid,
+        locationTo: entry.locationTo,
+        locationFrom: entry.locationFrom,
+        queueUuid: entry.uuid,
+      });
+      setShowOverlay(true);
+    },
+    [session?.sessionLocation?.uuid]
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
@@ -180,11 +186,11 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
                 handleBedAssigmentModal={handleBedAssigmentModal}
                 buttonText={"Assign Bed"}
               />
-            ) : status === "active" ? (
+            ) : status === "completed" ? (
               <AdmissionActionButton
                 entry={entry}
                 handleBedAssigmentModal={handleBedAssigmentModal}
-                buttonText={"Discharge"}
+                buttonText={"Transfer"}
               />
             ) : null}
           </>
@@ -211,8 +217,27 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
           size="xs"
           useZebraStyles
         >
-          {({ rows, headers, getTableProps }) => (
+          {({ rows, headers, getTableProps, onInputChange }) => (
             <TableContainer className={styles.tableContainer}>
+              <TableToolbar
+                style={{
+                  position: "static",
+                  height: "3rem",
+                  overflow: "visible",
+                  backgroundColor: "color",
+                }}
+              >
+                <TableToolbarContent className={styles.toolbarContent}>
+                  <Layer>
+                    <TableToolbarSearch
+                      className={styles.search}
+                      onChange={onInputChange}
+                      placeholder={t("searchThisList", "Search this list")}
+                      size="sm"
+                    />
+                  </Layer>
+                </TableToolbarContent>
+              </TableToolbar>
               <Table {...getTableProps()} className={styles.activeVisitsTable}>
                 <TableHead>
                   <TableRow>
@@ -259,7 +284,11 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
           <AssignBedWorkSpace
             patientDetails={selectedPatientDetails}
             closePanel={() => setShowOverlay(false)}
-            headerTitle={t("assignBedToPatient", "Assign bed to patient")}
+            queueStatus={status}
+            headerTitle={t(
+              "assignBedToPatient",
+              `Assign Bed to Patient ${selectedPatientDetails.name} in the ${session?.sessionLocation?.display} Ward`
+            )}
           />
         )}
       </div>

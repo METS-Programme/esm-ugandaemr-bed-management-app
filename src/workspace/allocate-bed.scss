@@ -5,9 +5,12 @@
 .container {
   // margin: spacing.$spacing-05 0rem;
   background-color: $ui-background;
+  max-height: 100%;
+  
 
   & section {
     margin: spacing.$spacing-02 spacing.$spacing-05 0;
+    overflow-y: auto;
     
   }
 }
@@ -99,4 +102,9 @@
       order: 2;
     }
   }
+}
+
+.disabled {
+  opacity: 0.8;
+  pointer-events: none;
 }
