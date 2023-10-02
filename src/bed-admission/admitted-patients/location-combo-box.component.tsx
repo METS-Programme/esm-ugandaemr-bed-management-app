@@ -31,7 +31,7 @@ const LocationComboBox = ({ setLocationUuid }) => {
         shouldFilterItem={filterLocationNames}
         items={admissionLocations}
         onChange={({ selectedItem }) => {
-          setLocationUuid(selectedItem?.uuid);
+          setLocationUuid(selectedItem?.uuid ?? "");
         }}
         selectedItem={admissionLocations?.find(
           (location) => location?.uuid === selectedLocationId

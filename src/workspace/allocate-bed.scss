@@ -9,9 +9,16 @@
   
 
   & section {
-    margin: spacing.$spacing-02 spacing.$spacing-05 0;
-    overflow-y: auto;
-    
+    margin: spacing.$spacing-09 0 0;
+    // overflow-y: auto;
+
+  }
+
+  :global(.cds--text-input) {
+    &:focus,
+    &:hover {
+      outline: 2px solid var(--cds-focus,#ff832b);
+    }
   }
 }
 

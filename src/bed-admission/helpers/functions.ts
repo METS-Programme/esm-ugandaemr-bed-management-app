@@ -1,4 +1,5 @@
 import { OpenmrsResource } from "@openmrs/esm-framework";
+import last from "lodash-es/last";
 
 export type QueuePriority = "Emergency" | "Not Urgent" | "Priority" | "Urgent";
 export type MappedQueuePriority = Omit<QueuePriority, "Urgent">;
@@ -94,3 +95,8 @@ export function findObsByConceptUUID(
 export function timeDiffInMinutes(date1: Date, date2: Date) {
   return Math.round((date1.getTime() - date2.getTime()) / (1000 * 3600 * 24));
 }
+
+export const getOriginFromPathName = (pathname = "") => {
+  const from = pathname.split("/");
+  return last(from);
+};

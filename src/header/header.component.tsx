@@ -11,9 +11,13 @@ import styles from "./header.scss";
 
 type HeaderProps = {
   route: string;
+  headerTitle?: string;
 };
 
-const Header: React.FC<HeaderProps> = ({ route }) => {
+const Header: React.FC<HeaderProps> = ({
+  route,
+  headerTitle = "Bed Management",
+}) => {
   const { t } = useTranslation();
   const userSession = useSession();
   const userLocation = userSession?.sessionLocation?.display;
@@ -27,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ route }) => {
           <Illustration />
         </ConfigurableLink>
         <div className={styles["page-labels"]}>
-          <p>{t("bedManagement", "Bed Management")}</p>
+          <p>{t("headerTitle", headerTitle)}</p>
           <p className={styles["page-name"]}>{route}</p>
         </div>
       </div>

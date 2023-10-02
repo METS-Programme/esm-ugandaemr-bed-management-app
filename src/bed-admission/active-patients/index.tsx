@@ -6,7 +6,7 @@ import BedAdmissionTabs from "../bed-admission-tabs.component";
 const ActivePatientsHome: React.FC = () => {
   return (
     <section className={styles.section}>
-      <Header route="Admission" />
+      <Header route="In Patient" headerTitle="" />
       <BedAdmissionTabs />
     </section>
   );

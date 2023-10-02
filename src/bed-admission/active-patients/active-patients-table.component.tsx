@@ -15,6 +15,9 @@ import {
   TableToolbar,
   TableToolbarContent,
   TableToolbarSearch,
+  TableExpandedRow,
+  TableExpandHeader,
+  TableExpandRow,
 } from "@carbon/react";
 
 import {
@@ -27,6 +30,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   formatWaitTime,
+  getOriginFromPathName,
   getTagColor,
   getTagType,
   trimVisitNumber,
@@ -37,25 +41,32 @@ import EmptyState from "../../empty-state/empty-state.component";
 import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component";
 import AdmissionActionButton from "./admission-action-button.component";
 import { patientDetailsProps } from "../types";
+import ViewActionsMenu from "./view-action-menu.component";
 
 interface ActiveVisitsTableProps {
   status: string;
+  setPatientCount?: (value: number) => void;
 }
 
-const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
+const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
+  status,
+  setPatientCount,
+}) => {
   const { t } = useTranslation();
   const session = useSession();
-
-  const { patientQueueEntries, isLoading } = usePatientQueuesList(
-    session?.sessionLocation?.uuid,
-    status
-  );
-
+  const currentPathName: string = window.location.pathname;
+  const fromPage: string = getOriginFromPathName(currentPathName);
+  const pageSizes = [10, 20, 30, 40, 50];
+  const [currentPageSize, setPageSize] = useState(10);
   const [showOverlay, setShowOverlay] = useState(false);
   const [selectedPatientDetails, setSelectedPatientDetails] =
     useState<patientDetailsProps>();
 
   const layout = useLayoutType();
+  const { patientQueueEntries, isLoading } = usePatientQueuesList(
+    session?.sessionLocation?.uuid,
+    status
+  );
 
   const handleBedAssigmentModal = useCallback(
     (entry) => {
@@ -73,8 +84,24 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
     [session?.sessionLocation?.uuid]
   );
 
-  const pageSizes = [10, 20, 30, 40, 50];
-  const [currentPageSize, setPageSize] = useState(10);
+  const renderActionButton = useCallback(
+    (entry) => {
+      const buttonTexts = {
+        pending: "Assign Bed",
+        completed: "Transfer",
+      };
+      const buttonText = buttonTexts[status] || "Un-assign";
+
+      return (
+        <AdmissionActionButton
+          entry={entry}
+          handleBedAssigmentModal={handleBedAssigmentModal}
+          buttonText={buttonText}
+        />
+      );
+    },
+    [handleBedAssigmentModal, status]
+  );
 
   const {
     goTo,
@@ -96,27 +123,33 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
       },
       {
         id: 2,
+        header: t("locationFrom", "Location From"),
+        key: "locationFrom",
+      },
+      {
+        id: 3,
         header: t("priority", "Priority"),
         key: "priority",
       },
       {
-        id: 3,
+        id: 4,
         header: t("priorityLevel", "Priority Level"),
         key: "priorityLevel",
       },
       {
-        id: 4,
+        id: 5,
         header: t("waitTime", "Wait time"),
         key: "waitTime",
       },
       {
-        id: 5,
+        id: 6,
         header: t("actions", "Actions"),
         key: "actions",
       },
     ],
     [t]
   );
+
   const tableRows = useMemo(() => {
     return paginatedQueueEntries?.map((entry) => ({
       ...entry,
@@ -125,6 +158,9 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
       },
       name: {
         content: entry.name,
+      },
+      locationFrom: {
+        content: entry.locationFromName,
       },
       priority: {
         content: (
@@ -180,27 +216,32 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
       actions: {
         content: (
           <>
-            {status === "pending" ? (
-              <AdmissionActionButton
-                entry={entry}
-                handleBedAssigmentModal={handleBedAssigmentModal}
-                buttonText={"Assign Bed"}
+            {renderActionButton(entry)}
+            {status === "completed" && (
+              <ViewActionsMenu
+                to={`\${openmrsSpaBase}/patient/${entry?.patientUuid}/chart`}
+                from={fromPage}
               />
-            ) : status === "completed" ? (
-              <AdmissionActionButton
-                entry={entry}
-                handleBedAssigmentModal={handleBedAssigmentModal}
-                buttonText={"Transfer"}
-              />
-            ) : null}
+            )}
           </>
         ),
       },
+      notes: {
+        content: entry.comment,
+      },
     }));
-  }, [paginatedQueueEntries, status, t, handleBedAssigmentModal]);
+  }, [paginatedQueueEntries, status, t, renderActionButton, fromPage]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;
+  }
+
+  if (
+    (!isLoading && patientQueueEntries && status === "pending") ||
+    status === "completed" ||
+    status === ""
+  ) {
+    setPatientCount(patientQueueEntries.length);
   }
 
   if (patientQueueEntries?.length) {
@@ -217,7 +258,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
           size="xs"
           useZebraStyles
         >
-          {({ rows, headers, getTableProps, onInputChange }) => (
+          {({ rows, headers, getTableProps, getRowProps, onInputChange }) => (
             <TableContainer className={styles.tableContainer}>
               <TableToolbar
                 style={{
@@ -241,6 +282,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
               <Table {...getTableProps()} className={styles.activeVisitsTable}>
                 <TableHead>
                   <TableRow>
+                    <TableExpandHeader />
                     {headers.map((header) => (
                       <TableHeader>
                         {header.header?.content ?? header.header}
@@ -249,15 +291,35 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({ status }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>
-                          {cell.value?.content ?? cell.value}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                  {rows.map((row, index) => {
+                    return (
+                      <>
+                        <TableExpandRow {...getRowProps({ row })} key={row.id}>
+                          {row.cells.map((cell) => (
+                            <TableCell key={cell.id}>
+                              {cell.value?.content ?? cell.value}
+                            </TableCell>
+                          ))}
+                        </TableExpandRow>
+
+                        {row.isExpanded ? (
+                          <TableExpandedRow
+                            className={styles.expandedLabQueueVisitRow}
+                            colSpan={headers.length + 2}
+                          >
+                            <>
+                              <span>{tableRows[index]?.comment ?? ""}</span>
+                            </>
+                          </TableExpandedRow>
+                        ) : (
+                          <TableExpandedRow
+                            className={styles.hiddenRow}
+                            colSpan={headers.length + 2}
+                          />
+                        )}
+                      </>
+                    );
+                  })}
                 </TableBody>
               </Table>
               <Pagination

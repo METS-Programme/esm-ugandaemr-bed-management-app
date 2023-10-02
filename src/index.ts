@@ -59,7 +59,7 @@ export const adminLeftPanelLink = getSyncLifecycle(
 export const bedAdmissionDashboardLink = getSyncLifecycle(
   createDashboardLink({
     name: "bed-admission",
-    title: "Bed admission",
+    title: "In Patient",
   }),
   options
 );

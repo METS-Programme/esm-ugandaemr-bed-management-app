@@ -8,8 +8,14 @@
 }
 
 .section {
-    border-right: 1px solid colors.$gray-20;
+  border-right: 1px solid colors.$gray-20;
+}
+
+.activePatientsTable tr:last-of-type {
+  td {
+    border-bottom: none;
   }
+}
 
 .headerContainer {
   display: flex;
@@ -89,6 +95,10 @@
     background-color: $ui-03;
   }
 
+  :global(.cds--data-table-content) {
+    display: contents;
+  }
+
   .toolbarContent {
     height: spacing.$spacing-07;
     margin-bottom: spacing.$spacing-02;
@@ -115,13 +125,13 @@
   td {
     padding: 0.5rem;
 
-    > div {
+    >div {
       max-height: max-content !important;
       background-color: $ui-02;
     }
   }
 
-  th[colspan] td[colspan] > div:first-child {
+  th[colspan] td[colspan]>div:first-child {
     padding: 0 1rem;
   }
 }
@@ -248,4 +258,23 @@
   color: $interactive-01;
   margin-top: 0.5rem;
   cursor: pointer;
+}
+
+.expandedLabQueueVisitRow {
+  :global(.cds--tab-content) {
+    padding: 0.5rem 0;
+  }
+
+  td {
+    padding: 0.5rem;
+
+    >div {
+      max-height: max-content !important;
+      background-color: $ui-02;
+    }
+  }
+
+  th[colspan] td[colspan]>div:first-child {
+    padding: 0 1rem;
+  }
 }

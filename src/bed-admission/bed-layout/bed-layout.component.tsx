@@ -2,22 +2,24 @@ import React, { useRef } from "react";
 import classnames from "classnames";
 import styles from "./bed-layout.scss";
 import { patientDetailsProps } from "../types";
+import { BedDetails } from "../../types";
 
 interface BedProps {
-  bedNumber: string;
   handleBedAssignment?: () => void;
   isBedSelected?: boolean;
   layOutStyles?: string;
   bedPillowStyles?: string;
   patientDetails?: patientDetailsProps;
+  bedDetails?: BedDetails;
 }
 
 const BedLayout: React.FC<BedProps> = ({
-  bedNumber,
   layOutStyles,
   bedPillowStyles,
   handleBedAssignment,
   isBedSelected,
+  bedDetails,
+  patientDetails,
 }) => {
   const bedRef = useRef(null);
 
@@ -26,11 +28,15 @@ const BedLayout: React.FC<BedProps> = ({
       <div
         ref={bedRef}
         role="button"
-        tabIndex={0} // Make the div focusable
+        tabIndex={0}
         onClick={() => handleBedAssignment()}
         className={classnames(styles.bedLayout, {
           [layOutStyles]: layOutStyles,
-          [styles.bedLayoutSelected]: isBedSelected,
+          [styles.bedLayoutSelected]:
+            isBedSelected ||
+            (bedDetails &&
+              bedDetails.patient &&
+              bedDetails.patient.uuid === patientDetails.patientUuid),
         })}
       >
         <div
@@ -39,8 +45,16 @@ const BedLayout: React.FC<BedProps> = ({
           })}
         ></div>
         <div style={{ display: "grid" }}>
-          <span className={styles.bedNumber}>{bedNumber}</span>
-          {/* <span className={styles.bedNumber}>006</span> */}
+          <span className={styles.bedNumber}>
+            {bedDetails && bedDetails.bedNumber}
+          </span>
+          <span className={styles.bedNumber}>
+            {bedDetails &&
+            bedDetails.patient &&
+            bedDetails.patient.uuid === patientDetails.patientUuid
+              ? bedDetails.patient.identifiers[0].identifier
+              : ""}
+          </span>
         </div>
       </div>
     </>

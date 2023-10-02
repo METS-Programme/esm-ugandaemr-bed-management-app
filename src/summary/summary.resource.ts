@@ -105,3 +105,19 @@ export const useAdmissionLocations = () => {
     mutate,
   };
 };
+
+export const useAdmissionLocationBedLayout = (locationUuid: string) => {
+  const locationsUrl = `/ws/rest/v1/admissionLocation/${locationUuid}?v=full`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data: AdmissionLocation },
+    Error
+  >(locationsUrl, openmrsFetch);
+
+  return {
+    data: data?.data?.bedLayouts ?? [],
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  };
+};

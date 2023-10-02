@@ -7,7 +7,6 @@ const MinBedLayout: React.FC = () => {
     <div className={styles.bedInfoContainer}>
       <div className={styles.bedInfoMain}>
         <BedLayout
-          bedNumber=""
           bedPillowStyles={styles.minPillow}
           layOutStyles={styles.minOccupied}
         />{" "}
@@ -15,7 +14,6 @@ const MinBedLayout: React.FC = () => {
       </div>
       <div className={styles.bedInfoMain}>
         <BedLayout
-          bedNumber=""
           bedPillowStyles={styles.minPillow}
           layOutStyles={styles.minAvailable}
         />{" "}

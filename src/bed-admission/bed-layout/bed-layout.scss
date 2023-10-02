@@ -20,7 +20,6 @@
   }
 
   .bedNumber {
-    // color: #fff;
     font-weight: bold;
   }
 
@@ -33,6 +32,7 @@
   background-color: #42be65 !important;
   color: #fff !important;
   border: 5px solid #e4e1c9 !important;
+  opacity:1 !important;
 }
 
 ;
@@ -43,7 +43,6 @@
 }
 
 .bedInfoContainer {
-  margin-top: 3rem;
   display: flex;
   justify-content: flex-end;
   padding-right: 4rem;
@@ -62,6 +61,11 @@
 .errorContainer {
   width: 90%;
   position: absolute;
+}
+
+.loadingContainer {
+  position: absolute;
+  margin: spacing.$spacing-02 spacing.$spacing-05 0;
 }
 
 .bed {

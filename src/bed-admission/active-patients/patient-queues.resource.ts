@@ -61,6 +61,7 @@ export function usePatientQueueRequest(apiUrl: string) {
       identifiers: queue.patient?.identifiers,
       locationFrom: queue.locationFrom?.uuid,
       locationTo: queue.locationTo?.uuid,
+      locationFromName: queue.locationFrom?.name,
       locationToName: queue.locationTo?.name,
       queueRoom: queue.locationTo?.display,
       visitNumber: queue.visitNumber,
