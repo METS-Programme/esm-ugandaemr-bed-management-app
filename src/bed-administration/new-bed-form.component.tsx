@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification, useConfig } from "@openmrs/esm-framework";
 
@@ -44,33 +44,35 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
     },
   };
 
-  const handleCreateQuestion = useCallback(
-    (event: SyntheticEvent<{ name: { value: string } }>) => {
-      const target = event.target as typeof event.target & {
-        occupancyStatus: { value: string };
-        bedId: { value: string };
-        bedRow: { value: string };
-        description: { value: string };
-        bedColumn: { value: string };
-        location: { title: string };
-        bedType: { value: string };
-      };
+  interface BedAdministrationData {
+    bedId: string;
+    description: string;
+    bedRow: number;
+    bedColumn: number;
+    location: string;
+    occupancyStatus: string;
+    bedType: string;
+  }
 
-      const bedNumber = target.bedId.value;
-      const description = target.description.value;
-      const occupancyStatus = target.occupancyStatus.value;
-      const bedRow = target.bedRow.value;
-      const bedColumn = target.bedColumn.value;
-      const bedLocation = target.location.title;
-      const bedType = target.bedType.value;
+  const handleCreateQuestion = useCallback(
+    (formData: BedAdministrationData) => {
+      // console.log(">><<<<<<<>>?<<<<<<<> event", formData);
+
+      const bedNumber = formData.bedId;
+      const description = formData.description;
+      const occupancyStatus = formData.occupancyStatus;
+      const bedRow = formData.bedRow;
+      const bedColumn = formData.bedColumn;
+      const bedLocation = formData.location;
+      const bedType = formData.bedType;
 
       const bedObject = {
         bedNumber,
         bedType,
         description,
         status: occupancyStatus.toUpperCase(),
-        row: parseInt(bedRow),
-        column: parseInt(bedColumn),
+        row: bedRow,
+        column: bedColumn,
         locationUuid: bedLocation,
       };
 
@@ -80,7 +82,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
             title: t("formCreated", "New bed created"),
             kind: "success",
             critical: true,
-            description: `Bed ${bedNumber} was created successfully.`,
+            description: `Bed was created successfully.`,
           });
 
           mutate();

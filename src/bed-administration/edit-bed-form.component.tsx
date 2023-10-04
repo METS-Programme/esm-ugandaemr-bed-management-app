@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification, useConfig } from "@openmrs/esm-framework";
 
@@ -32,7 +32,7 @@ const EditBedForm: React.FC<EditBedFormProps> = ({
   const availableBedTypes = bedTypes ? bedTypes : [];
 
   const handleCreateQuestion = useCallback(
-    (event: SyntheticEvent<{ name: { value: string } }>) => {
+    (event) => {
       const target = event.target as typeof event.target & {
         occupancyStatus: { value: string };
         bedId: { value: string };
