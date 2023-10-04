@@ -7,10 +7,15 @@ import { useAdmissionLocations } from "./summary.resource";
 import EmptyState from "../empty-state/empty-state.component";
 import WardCard from "../ward-card/ward-card.component";
 import styles from "./summary.scss";
+import { ErrorState } from "@openmrs/esm-patient-common-lib";
 
 const Summary: React.FC = () => {
   const { t } = useTranslation();
-  const { data: admissionLocations, isLoading } = useAdmissionLocations();
+  const {
+    data: admissionLocations,
+    isLoading,
+    error,
+  } = useAdmissionLocations();
 
   if (isLoading) {
     return (
@@ -34,14 +39,14 @@ const Summary: React.FC = () => {
               label={t("beds", "Beds")}
               value={admissionLocation?.totalBeds}
             >
-              {admissionLocation?.totalBeds ? (
+              {admissionLocation?.totalBeds && (
                 <div className={styles.link}>
                   <ConfigurableLink className={styles.link} to={routeSegment}>
                     {t("viewBeds", "View beds")}
                   </ConfigurableLink>
                   <ArrowRight size={16} />
                 </div>
-              ) : null}
+              )}
             </WardCard>
           );
         })}
@@ -49,8 +54,20 @@ const Summary: React.FC = () => {
     );
   }
 
-  if (!isLoading && admissionLocations?.length === 0) {
+  if (!isLoading && admissionLocations?.length === 0 && !error) {
     return <EmptyState msg="No data to display" helper={""} />;
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        headerTitle={t(
+          "errorFetchingbedInformation",
+          "Error fetching bed information"
+        )}
+        error={error}
+      />
+    );
   }
 };
 

@@ -70,6 +70,7 @@ export type Location = {
 
 export interface Bed {
   id: number;
+  bedId: number;
   uuid: string;
   bedNumber: string;
   bedType: {
@@ -122,6 +123,7 @@ export type AdmissionLocation = {
   };
   totalBeds: number;
   occupiedBeds: number;
+  bedLayouts: Array<BedDetails>;
 };
 
 export type MappedBedData = Array<{
@@ -130,4 +132,12 @@ export type MappedBedData = Array<{
   name: string;
   description: string;
   status: string;
+  uuid: string;
 }>;
+
+export interface BedDetails extends Bed {
+  patient: null | {
+    uuid: string;
+    identifiers: Array<{ identifier: string }>;
+  };
+}

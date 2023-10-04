@@ -42,6 +42,7 @@ export const useBedsForLocation = (locationUuid: string) => {
       name: bed.bedType?.displayName,
       description: bed.bedType?.description,
       status: bed.status,
+      uuid: bed.uuid,
     })
   );
 
@@ -90,7 +91,7 @@ export const useWards = (locationUuid: string) => {
 };
 
 export const useAdmissionLocations = () => {
-  const locationsUrl = `/ws/rest/v1/admissionLocation`;
+  const locationsUrl = `/ws/rest/v1/admissionLocation?v=full`;
   const { data, error, isLoading, isValidating, mutate } = useSWR<
     { data: { results: Array<AdmissionLocation> } },
     Error
@@ -98,6 +99,22 @@ export const useAdmissionLocations = () => {
 
   return {
     data: data?.data?.results ?? [],
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  };
+};
+
+export const useAdmissionLocationBedLayout = (locationUuid: string) => {
+  const locationsUrl = `/ws/rest/v1/admissionLocation/${locationUuid}?v=full`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data: AdmissionLocation },
+    Error
+  >(locationsUrl, openmrsFetch);
+
+  return {
+    data: data?.data?.bedLayouts ?? [],
     error,
     isLoading,
     isValidating,

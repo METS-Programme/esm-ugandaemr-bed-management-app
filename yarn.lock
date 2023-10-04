@@ -5330,7 +5330,9 @@ __metadata:
     "@types/webpack-env": ^1.18.1
     "@typescript-eslint/eslint-plugin": ^5.61.0
     "@typescript-eslint/parser": ^5.61.0
+    classnames: ^2.3.2
     css-loader: ^6.8.1
+    dayjs: ^1.11.9
     eslint: ^8.44.0
     eslint-config-prettier: ^8.8.0
     eslint-config-ts-react-important-stuff: ^3.0.0
@@ -5360,7 +5362,6 @@ __metadata:
   peerDependencies:
     "@openmrs/esm-framework": "*"
     "@openmrs/openmrs-form-engine-lib": 5.x
-    dayjs: 1.x
     react: 18.x
     react-i18next: 11.x
     react-router-dom: 6.x
@@ -7654,7 +7655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:2.3.2, classnames@npm:^2.2.6":
+"classnames@npm:2.3.2, classnames@npm:^2.2.6, classnames@npm:^2.3.2":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
@@ -9013,7 +9014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.4, dayjs@npm:^1.10.7":
+"dayjs@npm:^1.10.4, dayjs@npm:^1.10.7, dayjs@npm:^1.11.9":
   version: 1.11.9
   resolution: "dayjs@npm:1.11.9"
   checksum: a4844d83dc87f921348bb9b1b93af851c51e6f71fa259604809cfe1b49d1230e6b0212dab44d1cb01994c096ad3a77ea1cf18fa55154da6efcc9d3610526ac38
