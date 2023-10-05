@@ -1,14 +1,11 @@
 import React, { SyntheticEvent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  useLocations,
-  showToast,
-  showNotification,
-} from "@openmrs/esm-framework";
+import { showToast, showNotification, useConfig } from "@openmrs/esm-framework";
 
 import type { InitialData, Mutator } from "../types";
 import { useBedType, editBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
+import { useLocationsByTag } from "../summary/summary.resource";
 
 interface EditBedFormProps {
   showModal: boolean;
@@ -24,10 +21,14 @@ const EditBedForm: React.FC<EditBedFormProps> = ({
   mutate,
 }) => {
   const { t } = useTranslation();
+  const { admissionLocationTagUuid } = useConfig();
+  const { data: admissionLocations } = useLocationsByTag(
+    admissionLocationTagUuid
+  );
+
   const headerTitle = t("editBed", "Edit bed");
   const occupancyStatuses = ["Available", "Occupied"];
   const { bedTypes } = useBedType();
-  const allLocations = useLocations();
   const availableBedTypes = bedTypes ? bedTypes : [];
 
   const handleCreateQuestion = useCallback(
@@ -109,7 +110,7 @@ const EditBedForm: React.FC<EditBedFormProps> = ({
     <>
       <BedAdministrationForm
         onModalChange={onModalChange}
-        allLocations={allLocations}
+        allLocations={admissionLocations}
         availableBedTypes={availableBedTypes}
         showModal={showModal}
         handleCreateQuestion={handleCreateQuestion}

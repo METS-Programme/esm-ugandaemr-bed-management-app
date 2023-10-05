@@ -4,6 +4,24 @@
 .widgetCard {
   border: 1px solid colors.$gray-20;
   margin: 1.5rem;
+
+  :global(.cds--modal-content) {
+    margin-bottom: unset;
+  }
+
+  @media (min-width: 66rem) {
+    :global(.cds--modal-container) {
+      max-height: 100%;
+      width: 60%;
+    }
+  }
+
+  @media (min-width: 42rem) {
+    :global(.cds--modal-container) {
+      max-height: 100%;
+    }
+
+  }
 }
 
 .flexContainer {
