@@ -53,6 +53,7 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
   const [selectedLocationName, setSelectedLocationName] = useState(
     initialData.location.display
   );
+
   const [bedRow, setBedRow] = useState(initialData.row);
   const [bedColumn, setBedColumn] = useState(initialData.column);
   const [occupancyStatus, setOccupancyStatus] = useState(
@@ -146,7 +147,9 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                 placeholder={t("selectBedLocation", "Select a bed location")}
                 titleText={t("bedLocation", "Locations")}
                 title={selectedLocationId}
-                value={selectedLocationName}
+                initialSelectedItem={allLocations?.find(
+                  (location) => location?.display === selectedLocationName
+                )}
                 required
               />
             </FormGroup>
