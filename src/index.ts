@@ -42,7 +42,7 @@ export const adminCardLink = getAsyncLifecycle(
 
 export const summaryLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
-    name: "summary",
+    name: "bed-management",
     title: "Summary",
   }),
   options

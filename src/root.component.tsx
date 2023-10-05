@@ -23,7 +23,7 @@ const Root: React.FC = () => {
       <LeftPanel />
       <main className={styles.container}>
         <Routes>
-          <Route path="/summary" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/location/:location" element={<WardWithBeds />} />
           <Route path="/administration" element={<BedAdministrationTable />} />
         </Routes>

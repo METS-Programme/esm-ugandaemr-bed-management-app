@@ -215,7 +215,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
       },
       actions: {
         content: (
-          <>
+          <div className={styles.displayFlex}>
             {renderActionButton(entry)}
             {status === "completed" && (
               <ViewActionsMenu
@@ -223,7 +223,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
                 from={fromPage}
               />
             )}
-          </>
+          </div>
         ),
       },
       notes: {
