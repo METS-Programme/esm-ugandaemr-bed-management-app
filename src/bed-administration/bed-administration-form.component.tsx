@@ -19,24 +19,22 @@ import {
   TextArea,
   TextInput,
   InlineNotification,
-  Row,
-  Column,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
 import type { BedType, InitialData } from "../types";
-import styles from "./bed-administration-form.scss";
+import { BedAdministrationData } from "./bed-administration-types";
 
 const numberInString = z.string().transform((val, ctx) => {
   const parsed = parseInt(val);
-  if (isNaN(parsed)) {
+  if (isNaN(parsed) || parsed < 1) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Please enter a valid number",
     });
     return z.NEVER;
   }
-  return parsed;
+  return val;
 });
 
 const BedAdministrationSchema = z.object({
@@ -55,16 +53,6 @@ const BedAdministrationSchema = z.object({
     .refine((value) => value != "", "Please select a valid bed type"),
 });
 
-interface BedAdministrationData {
-  bedId: string;
-  description: string;
-  bedRow: number;
-  bedColumn: number;
-  location: string;
-  occupancyStatus: string;
-  bedType: string;
-}
-
 interface BedAdministrationFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
@@ -74,6 +62,10 @@ interface BedAdministrationFormProps {
   headerTitle: string;
   occupancyStatuses: string[];
   initialData: InitialData;
+}
+
+interface ErrorType {
+  message: string;
 }
 
 const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
@@ -87,17 +79,6 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
   initialData,
 }) => {
   const { t } = useTranslation();
-
-  // const [bedLabel, setBedIdLabel] = useState(initialData.bedNumber);
-  // const [descriptionLabel, setDescriptionLabel] = useState(
-  //   initialData.description
-  // );
-  // const [selectedLocationId, setSelectedLocationId] = useState("");
-  // const [selectedLocationName, setSelectedLocationName] = useState(
-  //   initialData.location.display
-  // );
-  // const [bedRow, setBedRow] = useState(initialData.row);
-  // const [bedColumn, setBedColumn] = useState(initialData.column);
   const [occupancyStatus, setOccupancyStatus] = useState(
     capitalize(initialData.status)
   );
@@ -116,48 +97,28 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
   const {
     handleSubmit,
     control,
-    // formState: { errors },
+    formState: { isDirty },
   } = useForm<BedAdministrationData>({
     mode: "all",
     resolver: zodResolver(BedAdministrationSchema),
     defaultValues: {
       bedId: initialData.bedNumber || "",
       description: initialData.description || "",
-      bedRow: initialData.row || 0,
-      bedColumn: initialData.column || 0,
-      location: initialData.location.display || "",
+      bedRow: initialData.row.toString() || "0",
+      bedColumn: initialData.column.toString() || "0",
+      location: initialData.location || {},
       occupancyStatus: capitalize(initialData.status) || occupancyStatus,
       bedType: initialData.bedType.name || "",
     },
   });
 
   const onSubmit = (formData: BedAdministrationData) => {
-    // console.log(">>>>>>> formData", formData);
-
-    // Validate form data with zod schema
     const result = BedAdministrationSchema.safeParse(formData);
-
     if (result.success) {
-      // console.log("yeesdsss");
-
       setShowErrorNotification(false);
       handleCreateQuestion(formData);
-    } else {
-      // Handle validation errors
-      setShowErrorNotification(true);
-      // console.log("noo", errors);
     }
   };
-
-  // const onSubmity = handleSubmit((data: BedAdministrationData) => {
-  //   BedAdministrationSchema.safeParse(data);
-  //   console.log(">>>data>>", data)
-  // })
-
-  interface ErrorType {
-    message: string;
-    // other properties
-  }
 
   const onError = (error: { [key: string]: ErrorType }) => {
     setFormStateError(Object.entries(error)[0][1].message);
@@ -175,18 +136,6 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
         <ModalBody hasScrollingContent>
           <Stack gap={3}>
             <FormGroup legendText={""}>
-              {/* <TextInput
-                id="bedId"
-                labelText={t("bedId", "Bed number")}
-                placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
-                invalidText={t(
-                  "bedIdExists",
-                  "This bed number has already been generated for this ward"
-                )}
-                value={bedLabel ?? ""}
-                onChange={(event) => setBedIdLabel(event.target.value)}
-                required
-              /> */}
               <Controller
                 name="bedId"
                 control={control}
@@ -199,7 +148,6 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                       invalidText={fieldState.error?.message}
                       {...field}
                     />
-                    {/* <p className={styles.errorMessage}> {fieldState?.error?.message}</p> */}
                   </>
                 )}
               />
@@ -217,16 +165,11 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                       invalidText={fieldState?.error?.message}
                       labelText={t("description", "Bed description")}
                       {...field}
-                      // onChange={(event) => setDescriptionLabel(event.target.value)}
-                      // value={descriptionLabel}
                       placeholder={t(
                         "description",
                         "Enter the bed description"
                       )}
                     />
-                    <p className={styles.errorMessage}>
-                      {fieldState?.error?.message}
-                    </p>
                   </>
                 )}
               />
@@ -236,10 +179,11 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
               <Controller
                 name="bedRow"
                 control={control}
-                render={({ field, fieldState }) => (
+                render={({ fieldState, field }) => (
                   <NumberInput
                     hideSteppers
                     id="bedRow"
+                    label="Bed row"
                     labelText="Bed row"
                     invalidText={fieldState?.error?.message}
                     {...field}
@@ -256,6 +200,7 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                   <NumberInput
                     hideSteppers
                     id="bedColumn"
+                    label="Bed column"
                     labelText="Bed column"
                     invalidText={fieldState.error?.message}
                     {...field}
@@ -265,28 +210,6 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
             </FormGroup>
 
             <FormGroup>
-              {/* <ComboBox
-                aria-label={t("location", "Locations")}
-                id="location"
-                label={t("location", "Locations")}
-                shouldFilterItem={filterLocationNames}
-                items={allLocations}
-                onChange={({ selectedItem }) => {
-                  setSelectedLocationId(selectedItem?.uuid);
-                  setSelectedLocationName(selectedItem?.display);
-                }}
-                selectedItem={allLocations?.find(
-                  (location) => location?.uuid === selectedLocationId
-                )}
-                itemToString={(location) => location?.display ?? ""}
-                placeholder={t("selectBedLocation", "Select a bed location")}
-                titleText={t("bedLocation", "Locations")}
-                title={selectedLocationId}
-                initialSelectedItem={allLocations?.find(
-                  (location) => location?.display === selectedLocationName
-                )}
-                required
-              /> */}
               <Controller
                 name="location"
                 control={control}
@@ -295,10 +218,10 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                   field: { onChange, onBlur, value, ref },
                 }) => (
                   <ComboBox
-                    aria-label={t("location", "Locations")}
+                    aria-label={t("location", "Location")}
                     shouldFilterItem={filterLocationNames}
                     id="location"
-                    label={t("location", "Locations")}
+                    label={t("location", "Location")}
                     invalidText={fieldState?.error?.message}
                     items={allLocations}
                     onBlur={onBlur}
@@ -310,7 +233,7 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                       "selectBedLocation",
                       "Select a bed location"
                     )}
-                    titleText={t("bedLocation", "Locations")}
+                    titleText={t("bedLocation", "Location")}
                   />
                 )}
               />
@@ -374,25 +297,24 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
                 )}
               />
             </FormGroup>
-            <Row>
-              {showErrorNotification && (
-                <Column>
-                  <InlineNotification
-                    lowContrast
-                    title={t("error", "Error")}
-                    subtitle={t("pleaseFillField", formStateError) + "."}
-                    onClose={() => setShowErrorNotification(false)}
-                  />
-                </Column>
-              )}
-            </Row>
+            {showErrorNotification && (
+              <InlineNotification
+                lowContrast
+                title={t("error", "Error")}
+                style={{ minWidth: "100%", margin: "0rem", padding: "0rem" }}
+                role="alert"
+                kind="error"
+                subtitle={t("pleaseFillField", formStateError) + "."}
+                onClose={() => setShowErrorNotification(false)}
+              />
+            )}
           </Stack>
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => onModalChange(false)} kind="secondary">
             {t("cancel", "Cancel")}
           </Button>
-          <Button type="submit">
+          <Button disabled={!isDirty} type="submit">
             <span>{t("save", "Save")}</span>
           </Button>
         </ModalFooter>

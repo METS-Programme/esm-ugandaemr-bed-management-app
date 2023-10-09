@@ -6,6 +6,7 @@ import type { InitialData, Mutator } from "../types";
 import { useBedType, saveBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
 import { useLocationsByTag } from "../summary/summary.resource";
+import { BedAdministrationData } from "./bed-administration-types";
 
 interface NewBedFormProps {
   showModal: boolean;
@@ -44,36 +45,26 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
     },
   };
 
-  interface BedAdministrationData {
-    bedId: string;
-    description: string;
-    bedRow: number;
-    bedColumn: number;
-    location: string;
-    occupancyStatus: string;
-    bedType: string;
-  }
-
   const handleCreateQuestion = useCallback(
     (formData: BedAdministrationData) => {
-      // console.log(">><<<<<<<>>?<<<<<<<> event", formData);
-
-      const bedNumber = formData.bedId;
-      const description = formData.description;
-      const occupancyStatus = formData.occupancyStatus;
-      const bedRow = formData.bedRow;
-      const bedColumn = formData.bedColumn;
-      const bedLocation = formData.location;
-      const bedType = formData.bedType;
+      const {
+        bedId,
+        description,
+        occupancyStatus,
+        bedRow,
+        bedColumn,
+        location,
+        bedType,
+      } = formData;
 
       const bedObject = {
-        bedNumber,
+        bedNumber: bedId,
         bedType,
         description,
         status: occupancyStatus.toUpperCase(),
-        row: bedRow,
-        column: bedColumn,
-        locationUuid: bedLocation,
+        row: parseInt(bedRow.toString()),
+        column: parseInt(bedColumn.toString()),
+        locationUuid: location.uuid,
       };
 
       saveBed({ bedPayload: bedObject })
