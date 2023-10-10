@@ -25,9 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <div className={styles.header}>
       <div className={styles["left-justified-items"]}>
-        <ConfigurableLink
-          to={`${window.getOpenmrsSpaBase()}bed-management/summary`}
-        >
+        <ConfigurableLink to={`${window.getOpenmrsSpaBase()}bed-management`}>
           <Illustration />
         </ConfigurableLink>
         <div className={styles["page-labels"]}>
