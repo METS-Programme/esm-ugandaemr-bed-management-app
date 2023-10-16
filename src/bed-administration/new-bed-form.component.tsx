@@ -73,7 +73,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
             title: t("formCreated", "New bed created"),
             kind: "success",
             critical: true,
-            description: `Bed was created successfully.`,
+            description: `Bed ${bedId} was created successfully.`,
           });
 
           mutate();
