@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification, useConfig } from "@openmrs/esm-framework";
 
@@ -6,6 +6,7 @@ import type { InitialData, Mutator } from "../types";
 import { useBedType, saveBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
 import { useLocationsByTag } from "../summary/summary.resource";
+import { BedAdministrationData } from "./bed-administration-types";
 
 interface NewBedFormProps {
   showModal: boolean;
@@ -45,33 +46,25 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
   };
 
   const handleCreateQuestion = useCallback(
-    (event: SyntheticEvent<{ name: { value: string } }>) => {
-      const target = event.target as typeof event.target & {
-        occupancyStatus: { value: string };
-        bedId: { value: string };
-        bedRow: { value: string };
-        description: { value: string };
-        bedColumn: { value: string };
-        location: { title: string };
-        bedType: { value: string };
-      };
-
-      const bedNumber = target.bedId.value;
-      const description = target.description.value;
-      const occupancyStatus = target.occupancyStatus.value;
-      const bedRow = target.bedRow.value;
-      const bedColumn = target.bedColumn.value;
-      const bedLocation = target.location.title;
-      const bedType = target.bedType.value;
+    (formData: BedAdministrationData) => {
+      const {
+        bedId,
+        description,
+        occupancyStatus,
+        bedRow,
+        bedColumn,
+        location,
+        bedType,
+      } = formData;
 
       const bedObject = {
-        bedNumber,
+        bedNumber: bedId,
         bedType,
         description,
         status: occupancyStatus.toUpperCase(),
-        row: parseInt(bedRow),
-        column: parseInt(bedColumn),
-        locationUuid: bedLocation,
+        row: parseInt(bedRow.toString()),
+        column: parseInt(bedColumn.toString()),
+        locationUuid: location.uuid,
       };
 
       saveBed({ bedPayload: bedObject })
@@ -80,7 +73,7 @@ const NewBedForm: React.FC<NewBedFormProps> = ({
             title: t("formCreated", "New bed created"),
             kind: "success",
             critical: true,
-            description: `Bed ${bedNumber} was created successfully.`,
+            description: `Bed ${bedId} was created successfully.`,
           });
 
           mutate();

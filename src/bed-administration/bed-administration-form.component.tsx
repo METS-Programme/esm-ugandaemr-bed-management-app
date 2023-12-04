@@ -1,5 +1,8 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { useState } from "react";
 import capitalize from "lodash-es/capitalize";
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   ComboBox,
@@ -15,22 +18,54 @@ import {
   Stack,
   TextArea,
   TextInput,
+  InlineNotification,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import { Location } from "@openmrs/esm-framework";
 import type { BedType, InitialData } from "../types";
+import { BedAdministrationData } from "./bed-administration-types";
+
+const numberInString = z.string().transform((val, ctx) => {
+  const parsed = parseInt(val);
+  if (isNaN(parsed) || parsed < 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Please enter a valid number",
+    });
+    return z.NEVER;
+  }
+  return val;
+});
+
+const BedAdministrationSchema = z.object({
+  bedId: z.string().min(5).max(255),
+  description: z.string().max(255),
+  bedRow: numberInString,
+  bedColumn: numberInString,
+  location: z
+    .object({ display: z.string(), uuid: z.string() })
+    .refine((value) => value.display != "", "Please select a valid location"),
+  occupancyStatus: z
+    .string()
+    .refine((value) => value != "", "Please select a valid occupied status"),
+  bedType: z
+    .string()
+    .refine((value) => value != "", "Please select a valid bed type"),
+});
 
 interface BedAdministrationFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
   availableBedTypes: Array<BedType>;
   allLocations: Location[];
-  handleCreateQuestion: (
-    event: SyntheticEvent<{ name: { value: string } }>
-  ) => void;
+  handleCreateQuestion?: (formData: BedAdministrationData) => void;
   headerTitle: string;
   occupancyStatuses: string[];
   initialData: InitialData;
+}
+
+interface ErrorType {
+  message: string;
 }
 
 const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
@@ -44,24 +79,12 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
   initialData,
 }) => {
   const { t } = useTranslation();
-
-  const [bedLabel, setBedIdLabel] = useState(initialData.bedNumber);
-  const [descriptionLabel, setDescriptionLabel] = useState(
-    initialData.description
-  );
-  const [selectedLocationId, setSelectedLocationId] = useState("");
-  const [selectedLocationName, setSelectedLocationName] = useState(
-    initialData.location.display
-  );
-
-  const [bedRow, setBedRow] = useState(initialData.row);
-  const [bedColumn, setBedColumn] = useState(initialData.column);
   const [occupancyStatus, setOccupancyStatus] = useState(
     capitalize(initialData.status)
   );
-  const [selectedBedType, setSelectedBedType] = useState(
-    initialData.bedType.name
-  );
+  const [selectedBedType] = useState(initialData.bedType.name);
+  const [showErrorNotification, setShowErrorNotification] = useState(false);
+  const [formStateError, setFormStateError] = useState("");
 
   const filterLocationNames = (location) => {
     return (
@@ -71,6 +94,37 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
     );
   };
 
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty },
+  } = useForm<BedAdministrationData>({
+    mode: "all",
+    resolver: zodResolver(BedAdministrationSchema),
+    defaultValues: {
+      bedId: initialData.bedNumber || "",
+      description: initialData.description || "",
+      bedRow: initialData.row.toString() || "0",
+      bedColumn: initialData.column.toString() || "0",
+      location: initialData.location || {},
+      occupancyStatus: capitalize(initialData.status) || occupancyStatus,
+      bedType: initialData.bedType.name || "",
+    },
+  });
+
+  const onSubmit = (formData: BedAdministrationData) => {
+    const result = BedAdministrationSchema.safeParse(formData);
+    if (result.success) {
+      setShowErrorNotification(false);
+      handleCreateQuestion(formData);
+    }
+  };
+
+  const onError = (error: { [key: string]: ErrorType }) => {
+    setFormStateError(Object.entries(error)[0][1].message);
+    setShowErrorNotification(true);
+  };
+
   return (
     <ComposedModal
       open={showModal}
@@ -78,129 +132,189 @@ const BedAdministrationForm: React.FC<BedAdministrationFormProps> = ({
       preventCloseOnClickOutside
     >
       <ModalHeader title={headerTitle} />
-      <Form onSubmit={handleCreateQuestion}>
+      <Form onSubmit={handleSubmit(onSubmit, onError)}>
         <ModalBody hasScrollingContent>
           <Stack gap={3}>
             <FormGroup legendText={""}>
-              <TextInput
-                id="bedId"
-                labelText={t("bedId", "Bed number")}
-                placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
-                invalidText={t(
-                  "bedIdExists",
-                  "This bed number has already been generated for this ward"
+              <Controller
+                name="bedId"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <>
+                    <TextInput
+                      id="bedId"
+                      labelText={t("bedId", "Bed number")}
+                      placeholder={t("bedIdPlaceholder", "e.g. BMW-201")}
+                      invalidText={fieldState.error?.message}
+                      {...field}
+                    />
+                  </>
                 )}
-                value={bedLabel ?? ""}
-                onChange={(event) => setBedIdLabel(event.target.value)}
-                required
               />
             </FormGroup>
 
             <FormGroup>
-              <TextArea
-                rows={2}
-                id="description"
-                labelText={t("description", "Bed description")}
-                onChange={(event) => setDescriptionLabel(event.target.value)}
-                value={descriptionLabel}
-                placeholder={t("description", "Enter the bed description")}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <NumberInput
-                hideSteppers
-                id="bedRow"
-                label="Bed row"
-                value={bedRow}
-                onChange={(event) => setBedRow(event.target.value)}
-                required
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <NumberInput
-                hideSteppers
-                id="bedColumn"
-                label="Bed column"
-                value={bedColumn}
-                onChange={(event) => setBedColumn(event.target.value)}
-                required
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <ComboBox
-                aria-label={t("location", "Locations")}
-                id="location"
-                label={t("location", "Locations")}
-                shouldFilterItem={filterLocationNames}
-                items={allLocations}
-                onChange={({ selectedItem }) => {
-                  setSelectedLocationId(selectedItem?.uuid);
-                  setSelectedLocationName(selectedItem?.display);
-                }}
-                selectedItem={allLocations?.find(
-                  (location) => location?.uuid === selectedLocationId
+              <Controller
+                name="description"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <>
+                    <TextArea
+                      rows={2}
+                      id="description"
+                      invalidText={fieldState?.error?.message}
+                      labelText={t("description", "Bed description")}
+                      {...field}
+                      placeholder={t(
+                        "description",
+                        "Enter the bed description"
+                      )}
+                    />
+                  </>
                 )}
-                itemToString={(location) => location?.display ?? ""}
-                placeholder={t("selectBedLocation", "Select a bed location")}
-                titleText={t("bedLocation", "Locations")}
-                title={selectedLocationId}
-                initialSelectedItem={allLocations?.find(
-                  (location) => location?.display === selectedLocationName
-                )}
-                required
               />
             </FormGroup>
 
             <FormGroup>
-              <Select
-                defaultValue={occupancyStatus}
-                onChange={(event) => setOccupancyStatus(event.target.value)}
-                id="occupancyStatus"
-                invalidText={t("typeRequired", "Type is required")}
-                labelText={t("occupancyStatus", "Occupied Status")}
-                value={occupancyStatus}
-                required
-              >
-                {occupancyStatuses.map((occupancyStatus, index) => (
-                  <SelectItem
-                    text={t("occupancyStatus", `${occupancyStatus}`)}
-                    value={t("occupancyStatus", `${occupancyStatus}`)}
-                    key={`occupancyStatus-${index}`}
+              <Controller
+                name="bedRow"
+                control={control}
+                render={({ fieldState, field }) => (
+                  <NumberInput
+                    hideSteppers
+                    id="bedRow"
+                    label="Bed row"
+                    labelText="Bed row"
+                    invalidText={fieldState?.error?.message}
+                    {...field}
                   />
-                ))}
-              </Select>
+                )}
+              />
             </FormGroup>
 
             <FormGroup>
-              <Select
-                defaultValue={selectedBedType}
-                onChange={(event) => setSelectedBedType(event.target.value)}
-                id="bedType"
-                invalidText={t("typeRequired", "Type is required")}
-                labelText={t("bedType", "Bed type")}
-                required
-              >
-                {availableBedTypes.map((bedType, index) => (
-                  <SelectItem
-                    text={bedType.name}
-                    value={t("bedType", `${bedType.name}`)}
-                    key={`bedType-${index}`}
-                  >
-                    {t("bedType", `${bedType.name}`)}
-                  </SelectItem>
-                ))}
-              </Select>
+              <Controller
+                name="bedColumn"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <NumberInput
+                    hideSteppers
+                    id="bedColumn"
+                    label="Bed column"
+                    labelText="Bed column"
+                    invalidText={fieldState.error?.message}
+                    {...field}
+                  />
+                )}
+              />
             </FormGroup>
+
+            <FormGroup>
+              <Controller
+                name="location"
+                control={control}
+                render={({
+                  fieldState,
+                  field: { onChange, onBlur, value, ref },
+                }) => (
+                  <ComboBox
+                    aria-label={t("location", "Location")}
+                    shouldFilterItem={filterLocationNames}
+                    id="location"
+                    label={t("location", "Location")}
+                    invalidText={fieldState?.error?.message}
+                    items={allLocations}
+                    onBlur={onBlur}
+                    ref={ref}
+                    selectedItem={value}
+                    onChange={({ selectedItem }) => onChange(selectedItem)}
+                    itemToString={(location) => location?.display ?? ""}
+                    placeholder={t(
+                      "selectBedLocation",
+                      "Select a bed location"
+                    )}
+                    titleText={t("bedLocation", "Location")}
+                  />
+                )}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Controller
+                name="occupancyStatus"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Select
+                    id="occupancyStatus"
+                    labelText={t("occupancyStatus", "Occupied Status")}
+                    invalidText={fieldState.error?.message}
+                    defaultValue={occupancyStatus}
+                    onChange={(event) => setOccupancyStatus(event.target.value)}
+                    value={occupancyStatus}
+                    {...field}
+                  >
+                    <SelectItem
+                      text={t("chooseOccupiedStatus", "Choose occupied status")}
+                      value=""
+                    />
+                    {occupancyStatuses.map((occupancyStatus, index) => (
+                      <SelectItem
+                        text={t("occupancyStatus", `${occupancyStatus}`)}
+                        value={t("occupancyStatus", `${occupancyStatus}`)}
+                        key={`occupancyStatus-${index}`}
+                      />
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Controller
+                name="bedType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    id="bedType"
+                    labelText={t("bedType", "Bed type")}
+                    invalidText={t("required", "Required")}
+                    defaultValue={selectedBedType}
+                    {...field}
+                  >
+                    <SelectItem
+                      text={t("chooseBedtype", "Choose a bed type")}
+                    />
+                    {availableBedTypes.map((bedType, index) => (
+                      <SelectItem
+                        text={bedType.name}
+                        value={bedType.name}
+                        key={`bedType-${index}`}
+                      >
+                        {bedType.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormGroup>
+            {showErrorNotification && (
+              <InlineNotification
+                lowContrast
+                title={t("error", "Error")}
+                style={{ minWidth: "100%", margin: "0rem", padding: "0rem" }}
+                role="alert"
+                kind="error"
+                subtitle={t("pleaseFillField", formStateError) + "."}
+                onClose={() => setShowErrorNotification(false)}
+              />
+            )}
           </Stack>
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => onModalChange(false)} kind="secondary">
             {t("cancel", "Cancel")}
           </Button>
-          <Button type="submit">
+          <Button disabled={!isDirty} type="submit">
             <span>{t("save", "Save")}</span>
           </Button>
         </ModalFooter>

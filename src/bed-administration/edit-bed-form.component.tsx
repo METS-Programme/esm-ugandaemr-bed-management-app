@@ -1,10 +1,11 @@
-import React, { SyntheticEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification, useConfig } from "@openmrs/esm-framework";
 
 import type { InitialData, Mutator } from "../types";
 import { useBedType, editBed } from "./bed-administration.resource";
 import BedAdministrationForm from "./bed-administration-form.component";
+import { BedAdministrationData } from "./bed-administration-types";
 import { useLocationsByTag } from "../summary/summary.resource";
 
 interface EditBedFormProps {
@@ -30,61 +31,35 @@ const EditBedForm: React.FC<EditBedFormProps> = ({
   const occupancyStatuses = ["Available", "Occupied"];
   const { bedTypes } = useBedType();
   const availableBedTypes = bedTypes ? bedTypes : [];
-
   const handleCreateQuestion = useCallback(
-    (event: SyntheticEvent<{ name: { value: string } }>) => {
-      const target = event.target as typeof event.target & {
-        occupancyStatus: { value: string };
-        bedId: { value: string };
-        bedRow: { value: string };
-        description: { value: string };
-        bedColumn: { value: string };
-        location: { title: string };
-        bedType: { value: string };
-      };
-
-      const bedId = editData.uuid;
-
-      const bedNumber = target.bedId.value
-        ? target.bedId.value
-        : editData.bedNumber;
-      const description = target.description.value
-        ? target.description.value
-        : editData.description;
-      const occupancyStatus = target.occupancyStatus.value
-        ? target.occupancyStatus.value
-        : editData.status;
-      const bedRow = target.bedRow.value
-        ? parseInt(target.bedRow.value)
-        : editData.row;
-      const bedColumn = target.bedColumn.value
-        ? parseInt(target.bedColumn.value)
-        : editData.column;
-      const bedLocation = target.location.title
-        ? target.location.title
-        : editData.location.uuid;
-      const bedType = target.bedType.value
-        ? target.bedType.value
-        : editData.bedType.name;
-
+    (formData: BedAdministrationData) => {
+      const bedUuid = editData.uuid;
+      const {
+        bedId = editData.bedNumber,
+        description = editData.description,
+        occupancyStatus = editData.status,
+        bedRow = editData.row.toString(),
+        bedColumn = editData.column.toString(),
+        location: { uuid: bedLocation = editData.location.uuid },
+        bedType = editData.bedType.name,
+      } = formData;
       const bedPayload = {
-        bedNumber,
+        bedNumber: bedId,
         bedType,
         description,
         status: occupancyStatus.toUpperCase(),
-        row: bedRow,
-        column: bedColumn,
+        row: parseInt(bedRow),
+        column: parseInt(bedColumn),
         locationUuid: bedLocation,
       };
-
-      editBed({ bedPayload, bedId })
+      editBed({ bedPayload, bedId: bedUuid })
         .then(() => {
           showToast({
             title: t("formSaved", "Bed saved"),
             kind: "success",
             critical: true,
             description:
-              bedNumber +
+              bedPayload.bedNumber +
               " " +
               t("saveSuccessMessage", "was saved successfully."),
           });
