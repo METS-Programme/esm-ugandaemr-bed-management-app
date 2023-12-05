@@ -29,7 +29,7 @@ export function usePatientQueuesList(
   currentQueueRoomLocationUuid: string,
   status: string
 ) {
-  const apiUrl = `/ws/rest/v1/patientqueue?v=full&locationFrom=${currentQueueRoomLocationUuid}&status=${status}`;
+  const apiUrl = `/ws/rest/v1/patientqueue?v=full&room=${currentQueueRoomLocationUuid}&status=${status}`;
   return usePatientQueueRequest(apiUrl);
 }
 
