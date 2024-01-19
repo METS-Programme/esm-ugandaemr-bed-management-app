@@ -7,7 +7,7 @@ import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
 import { createDashboardLink } from "./bed-admission/createDashboardLink";
 
-const moduleName = "@ugandaemr/esm-bed-management-app";
+const moduleName = "@kenyaemr/esm-bed-management-app";
 
 const options = {
   featureName: "bed-management",
