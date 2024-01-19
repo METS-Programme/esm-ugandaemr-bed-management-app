@@ -1,4 +1,4 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@carbon/react";
+import { Tab, TabList, TabPanel, TabPanels, Tabs, Button } from "@carbon/react";
 import React, { useState } from "react";
 import styles from "./bed-admission-tabs-styles.scss";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,6 @@ const BedAdmissionTabs: React.FC = () => {
   const [admittedCount, setAdmittedCount] = useState(0);
   const [toAdmitCount, setToAdmitCount] = useState(0);
   const [toDischargeCount, setToDischargeCount] = useState(0);
-
   return (
     <>
       <div className={styles.cardContainer}>
