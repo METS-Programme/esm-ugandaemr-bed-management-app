@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   showNotification,
   showToast,
+  useConfig,
   useLayoutType,
 } from "@openmrs/esm-framework";
 import styles from "./allocate-bed.scss";
@@ -45,43 +46,34 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
   const [selectedBed, setSelectedBed] = useState<Bed>();
   const [isBedAssigned, setIsBedAssigned] = useState(false);
   const [isQueueEnded, setIsQueueEnded] = useState(false);
-  const [locationUuid, setLocation] = useState(patientDetails.locationUuid);
+  const { restrictWardAdministrationToLoginLocation } = useConfig();
+  const [locationUuid, setLocation] = useState(
+    restrictWardAdministrationToLoginLocation ? patientDetails.locationUuid : ""
+  );
 
   const handleClick = (bed) => {
     setSelectedBed(bed);
   };
 
-  if (isBedAssigned) {
-    endPatientQueue({ status: "completed" }, patientDetails.queueUuid)
-      .then(() => setIsQueueEnded(true))
-      .catch((error) => {
-        showNotification({
-          title: t("errorEndingQueue", "Error Ending Queve"),
-          kind: "error",
-          critical: true,
-          description: error?.message,
-        });
-      });
-  }
-
-  if (isQueueEnded) {
-    showToast({
-      title: t("bedAssigned", "Bed Assigned"),
-      kind: "success",
-      critical: true,
-      description: `Bed ${selectedBed.bedNumber} was assigned to ${patientDetails.name} successfully.`,
-    });
-    closePanel(false);
-  }
-
   const handleAssignBedToPatient = useCallback(() => {
     const patientAndEncounterUuids = {
-      encounterUuid: patientDetails?.encounter?.uuid,
+      encounterUuid:
+        patientDetails?.encounter?.uuid ??
+        "84d26085-da4c-461a-8481-7c95ed3f4558",
       patientUuid: patientDetails.patientUuid,
     };
 
     assignPatientBed(patientAndEncounterUuids, selectedBed.bedId)
-      .then(() => setIsBedAssigned(true))
+      .then(() => {
+        setIsBedAssigned(true);
+        showToast({
+          title: t("bedAssigned", "Bed Assigned"),
+          kind: "success",
+          critical: true,
+          description: `Bed ${selectedBed.bedNumber} was assigned to ${patientDetails.name} successfully.`,
+        });
+        closePanel(false);
+      })
       .catch((error) => {
         showNotification({
           title: t("errorAssigningBed", "Error assigning bed"),
@@ -98,10 +90,12 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
         <div className={styles.container}>
           <Stack gap={8} className={styles.container}>
             <section className={styles.section}>
-              {queueStatus !== "completed" ? (
-                ""
-              ) : (
+              {restrictWardAdministrationToLoginLocation ? (
                 <LocationComboBox setLocationUuid={setLocation} />
+              ) : (
+                <>
+                  <LocationComboBox setLocationUuid={setLocation} />
+                </>
               )}
               <BedLayoutList
                 locationUuid={locationUuid}

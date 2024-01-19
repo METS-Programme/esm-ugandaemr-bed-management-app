@@ -83,6 +83,7 @@ export interface Bed {
   row: number;
   column: number;
   status: "AVAILABLE" | string;
+  location: string;
 }
 
 export interface BedType {
@@ -138,6 +139,14 @@ export type MappedBedData = Array<{
 export interface BedDetails extends Bed {
   patient: null | {
     uuid: string;
+    person: {
+      gender: string;
+      age: number;
+      preferredName: {
+        givenName: string;
+        familyName: string;
+      };
+    };
     identifiers: Array<{ identifier: string }>;
   };
 }

@@ -29,28 +29,18 @@ import {
 } from "@openmrs/esm-framework";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  formatWaitTime,
-  getOriginFromPathName,
-  getTagColor,
-  getTagType,
-  trimVisitNumber,
-} from "../helpers/functions";
-import styles from "./styles.scss";
-import { usePatientQueuesList } from "./patient-queues.resource";
-import { useActiveVisits } from "./active-visits.resource";
+import { getOriginFromPathName } from "../helpers/functions";
+import styles from "../active-patients/styles.scss";
+import { useActiveAdmissions } from "./active-admissions.resource";
 import EmptyState from "../../empty-state/empty-state.component";
-import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component";
-import AdmissionActionButton from "./admission-action-button.component";
 import { patientDetailsProps } from "../types";
-import ViewActionsMenu from "./view-action-menu.component";
 
 interface ActiveVisitsTableProps {
   status: string;
   setPatientCount?: (value: number) => void;
 }
 
-const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
+const AdmittedPatientsTable: React.FC<ActiveVisitsTableProps> = ({
   status,
   setPatientCount,
 }) => {
@@ -66,7 +56,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
 
   const layout = useLayoutType();
 
-  const { patientQueueEntries, isLoading } = useActiveVisits();
+  const { patientQueueEntries, isLoading } = useActiveAdmissions();
   const { restrictWardAdministrationToLoginLocation } = useConfig();
 
   const handleBedAssigmentModal = useCallback(
@@ -93,13 +83,13 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
       };
       const buttonText = buttonTexts[status] || "Un-assign";
 
-      return (
-        <AdmissionActionButton
-          entry={entry}
-          handleBedAssigmentModal={handleBedAssigmentModal}
-          buttonText={buttonText}
-        />
-      );
+      // return (
+      //   <AdmissionActionButton
+      //     entry={entry}
+      //     handleBedAssigmentModal={handleBedAssigmentModal}
+      //     buttonText={buttonText}
+      //   />
+      // );
     },
     [handleBedAssigmentModal, status]
   );
@@ -115,12 +105,12 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
       {
         id: 0,
         header: t("name", "Name"),
-        key: "name",
+        key: "patientName",
       },
       {
         id: 1,
-        header: t("idNumber", "ID Number"),
-        key: "idNumber",
+        header: t("age", "Age"),
+        key: "age",
       },
       {
         id: 2,
@@ -129,22 +119,17 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
       },
       {
         id: 3,
-        header: t("age", "Age"),
-        key: "age",
+        header: t("ward", "Ward"),
+        key: "ward",
       },
       {
         id: 4,
-        header: t("visitType", "Visit type"),
-        key: "visitType",
+        header: t("bedNumber", "Bed Number"),
+        key: "bedNumber",
       },
       {
         id: 5,
-        header: t("visitStartTime", "Visit start date/time"),
-        key: "visitStartTime",
-      },
-      {
-        id: 6,
-        header: t("action", "Action"),
+        header: t("actions", "Action"),
         key: "actions",
       },
     ],
@@ -152,11 +137,14 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
   );
 
   const tableRows = useMemo(() => {
-    return paginatedQueueEntries?.map((entry) => ({
-      ...entry,
+    return paginatedQueueEntries?.map((entry: any, index) => ({
+      ...(entry as object),
+      id: `${entry?.patientUuid}`,
       actions: {
         content: (
-          <div className={styles.displayFlex}>{renderActionButton(entry)}</div>
+          <div className={styles.displayFlex}>
+            {/* {renderActionButton(entry)} */}
+          </div>
         ),
       },
     }));
@@ -236,11 +224,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
                           <TableExpandedRow
                             className={styles.expandedLabQueueVisitRow}
                             colSpan={headers.length + 2}
-                          >
-                            <>
-                              {/* <span>{tableRows[index]?.comment ?? ""}</span> */}
-                            </>
-                          </TableExpandedRow>
+                          ></TableExpandedRow>
                         ) : (
                           <TableExpandedRow
                             className={styles.hiddenRow}
@@ -272,7 +256,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
             </TableContainer>
           )}
         </DataTable>
-        {showOverlay && (
+        {/* {showOverlay && (
           <AssignBedWorkSpace
             patientDetails={selectedPatientDetails}
             closePanel={() => setShowOverlay(false)}
@@ -284,16 +268,13 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
                 : `Assign Bed to Patient  ${selectedPatientDetails.name}`
             )}
           />
-        )}
+        )} */}
       </div>
     );
   }
 
   return (
-    <EmptyState
-      msg={t("noQueueItems", "No queue items to display")}
-      helper=""
-    />
+    <EmptyState msg={t("noQueueItems", "No admissions to display")} helper="" />
   );
 };
-export default ActivePatientsTable;
+export default AdmittedPatientsTable;

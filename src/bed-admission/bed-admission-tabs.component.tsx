@@ -42,7 +42,7 @@ const BedAdmissionTabs: React.FC = () => {
               {t("admitted", `Admitted (${toAdmitCount})`)}
             </Tab>
             <Tab className={styles.tab}>
-              {t("discharged", `To Discharge (${toDischargeCount})`)}
+              {t("discharged", `To Discharge (0)`)}
             </Tab>
           </TabList>
           <TabPanels>
@@ -58,12 +58,7 @@ const BedAdmissionTabs: React.FC = () => {
                 setPatientCount={setToAdmitCount}
               />
             </TabPanel>
-            <TabPanel>
-              <DischargedPatientsList
-                status=""
-                setPatientCount={setToDischargeCount}
-              />
-            </TabPanel>
+            <TabPanel></TabPanel>
           </TabPanels>
         </Tabs>
       </div>

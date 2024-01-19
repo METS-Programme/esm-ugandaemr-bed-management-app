@@ -6,7 +6,10 @@ import { useConfig, useSession } from "@openmrs/esm-framework";
 
 const LocationComboBox = ({ setLocationUuid }) => {
   const { t } = useTranslation();
-  const { admissionLocationTagUuid } = useConfig();
+  const {
+    admissionLocationTagUuid,
+    restrictWardAdministrationToLoginLocation,
+  } = useConfig();
   const session = useSession();
   const [selectedLocationId] = useState("");
 
@@ -37,9 +40,13 @@ const LocationComboBox = ({ setLocationUuid }) => {
           (location) => location?.uuid === selectedLocationId
         )}
         itemToString={(location) => location?.display ?? ""}
-        placeholder={t("selectNewLocation", "Select a new location")}
+        placeholder={t("selectNewLocation", "Select an admission location")}
         title={selectedLocationId}
-        initialSelectedItem={session.sessionLocation ?? ""}
+        initialSelectedItem={
+          restrictWardAdministrationToLoginLocation
+            ? session.sessionLocation
+            : ""
+        }
       />
     </FormGroup>
   );

@@ -53,7 +53,17 @@ const BedLayoutList: React.FC<BedLayoutListProps> = React.memo(
       );
     }
 
-    if (!bedData?.length) {
+    if (locationUuid === undefined) {
+      return (
+        <div className={styles.errorContainer}>
+          <EmptyState
+            msg={t("noWardSelected", "No ward has been selected")}
+            helper=""
+          />
+        </div>
+      );
+    }
+    if (locationUuid !== undefined && !bedData?.length) {
       return (
         <div className={styles.errorContainer}>
           <EmptyState

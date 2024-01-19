@@ -1,6 +1,5 @@
 import React from "react";
-import ActivePatientsTable from "../active-patients/active-patients-table.component";
-
+import AdmittedPatientsTable from "./admitted-patients-table.component";
 interface AdmittedPatientsListProps {
   status: string;
   setPatientCount: (value: number) => void;
@@ -12,7 +11,10 @@ const AdmittedPatientsList: React.FC<AdmittedPatientsListProps> = ({
 }) => {
   return (
     <>
-      <ActivePatientsTable status={status} setPatientCount={setPatientCount} />
+      <AdmittedPatientsTable
+        status={status}
+        setPatientCount={setPatientCount}
+      />
     </>
   );
 };
