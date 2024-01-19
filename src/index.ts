@@ -56,6 +56,20 @@ export const adminLeftPanelLink = getSyncLifecycle(
   options
 );
 
+export const bedTypeLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
+    name: "bed-type",
+    title: "Bed Type",
+  }),
+  options
+);
+export const bedTagLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
+    name: "bed-tag",
+    title: "Bed Tag",
+  }),
+  options
+);
 export const bedAdmissionDashboardLink = getSyncLifecycle(
   createDashboardLink({
     name: "bed-admission",

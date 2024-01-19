@@ -108,6 +108,17 @@ export interface InitialData {
   };
 }
 
+export interface BedTypeData {
+  uuid: string;
+  name: string;
+  displayName: string;
+  description: string;
+}
+
+export interface BedTagData {
+  uuid: string;
+  name: string;
+}
 export type Mutator = KeyedMutator<{
   data: {
     results: Array<Location>;
