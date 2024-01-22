@@ -33,6 +33,16 @@
       "slot": "bed-admission-dashboard-slot"
     },
     {
+      "component": "bedTypeLeftPanelLink",
+      "name": "bed-type-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
+      "component": "bedTagLeftPanelLink",
+      "name": "bed-tag-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
       "name": "bed-admission-dashboard-link",
       "component": "bedAdmissionDashboardLink",
       "slot": "homepage-dashboard-slot",

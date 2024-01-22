@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { openmrsFetch } from "@openmrs/esm-framework";
+import { FetchResponse, openmrsFetch } from "@openmrs/esm-framework";
 import type { AdmissionLocation, Bed, MappedBedData } from "../types";
 
 export const useLocationsByTag = (locationUuid: string) => {
@@ -121,3 +121,91 @@ export const useAdmissionLocationBedLayout = (locationUuid: string) => {
     mutate,
   };
 };
+export const useBedType = () => {
+  const url = `/ws/rest/v1/bedtype/`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(url, openmrsFetch);
+  const results = data?.data?.results ? data?.data?.results : [];
+  return {
+    bedTypeData: results,
+    isError: error,
+    loading: isLoading,
+    validate: isValidating,
+    mutate,
+  };
+};
+
+export const useBedTag = () => {
+  const url = `/ws/rest/v1/bedTag/`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(url, openmrsFetch);
+  const results = data?.data?.results ? data?.data?.results : [];
+  return {
+    bedTypeData: results,
+    isError: error,
+    loading: isLoading,
+    validate: isValidating,
+    mutate,
+  };
+};
+interface BedType {
+  name: string;
+  displayName: string;
+  description: string;
+}
+interface BedTag {
+  name: string;
+}
+export async function saveBedType({
+  bedPayload,
+}): Promise<FetchResponse<BedType>> {
+  const response: FetchResponse = await openmrsFetch(`/ws/rest/v1/bedtype`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: bedPayload,
+  });
+  return response;
+}
+
+export async function saveBedTag({
+  bedPayload,
+}): Promise<FetchResponse<BedTag>> {
+  const response: FetchResponse = await openmrsFetch(`/ws/rest/v1/bedTag/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: bedPayload,
+  });
+  return response;
+}
+export async function editBedType({
+  bedPayload,
+  bedTypeId,
+}): Promise<FetchResponse<BedType>> {
+  const response: FetchResponse = await openmrsFetch(
+    `/ws/rest/v1/bedtype/${bedTypeId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: bedPayload,
+    }
+  );
+  return response;
+}
+export async function editBedTag({
+  bedPayload,
+  bedTagId,
+}): Promise<FetchResponse<BedType>> {
+  const response: FetchResponse = await openmrsFetch(
+    `/ws/rest/v1/bedTag/${bedTagId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: bedPayload,
+    }
+  );
+  return response;
+}

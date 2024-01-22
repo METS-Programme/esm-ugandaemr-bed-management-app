@@ -10,3 +10,11 @@ export interface BedAdministrationData {
   occupancyStatus: string;
   bedType: string;
 }
+export interface BedTypeDataAdministration {
+  name: string;
+  displayName: string;
+  description: string;
+}
+export interface BedTagDataAdministration {
+  name: string;
+}

@@ -6,6 +6,8 @@ import Home from "./home.component";
 import LeftPanel from "./left-panel/left-panel.component";
 import WardWithBeds from "./ward-with-beds/ward-with-beds.component";
 import styles from "./root.scss";
+import BedTagAdministrationTable from "./bed-admission/bed-tag/bed-tag-administration-table.component";
+import BedTypeAdministrationTable from "./bed-admission/bed-type/bed-type-administration-table.component";
 
 const Root: React.FC = () => {
   const spaBasePath = window.spaBase;
@@ -26,6 +28,8 @@ const Root: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/location/:location" element={<WardWithBeds />} />
           <Route path="/administration" element={<BedAdministrationTable />} />
+          <Route path="/bed-tag" element={<BedTagAdministrationTable />} />
+          <Route path="/bed-type" element={<BedTypeAdministrationTable />} />
         </Routes>
       </main>
     </BrowserRouter>
