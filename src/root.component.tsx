@@ -30,7 +30,6 @@ const Root: React.FC = () => {
           <Route path="/administration" element={<BedAdministrationTable />} />
           <Route path="/bed-tag" element={<BedTagAdministrationTable />} />
           <Route path="/bed-type" element={<BedTypeAdministrationTable />} />
-
         </Routes>
       </main>
     </BrowserRouter>
