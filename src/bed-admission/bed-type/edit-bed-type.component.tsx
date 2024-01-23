@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification } from "@openmrs/esm-framework";
-
 import { editBedType, useBedType } from "../../summary/summary.resource";
 import { BedTypeDataAdministration } from "../../bed-administration/bed-administration-types";
 import { BedTypeData, Mutator } from "../../types";

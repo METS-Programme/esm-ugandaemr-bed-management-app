@@ -67,7 +67,6 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
     session?.sessionLocation?.uuid,
     status
   );
-
   const handleBedAssigmentModal = useCallback(
     (entry) => {
       setSelectedPatientDetails({

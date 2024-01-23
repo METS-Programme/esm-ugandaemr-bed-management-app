@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification } from "@openmrs/esm-framework";
-
 import { editBedTag, useBedTag } from "../../summary/summary.resource";
 import { BedTagDataAdministration } from "../../bed-administration/bed-administration-types";
 import BedTagsAdministrationForm from "./bed-tags-admin-form.component";

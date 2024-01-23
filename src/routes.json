@@ -22,6 +22,16 @@
       "slot": "bed-management-left-panel-slot"
     },
     {
+      "component": "bedTypeLeftPanelLink",
+      "name": "bed-type-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
+      "component": "bedTagLeftPanelLink",
+      "name": "bed-tag-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
       "component": "summaryLeftPanelLink",
       "name": "bed-management-home-dashboard-link",
       "slot": "bed-management-left-panel-slot",
