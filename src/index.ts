@@ -55,7 +55,6 @@ export const adminLeftPanelLink = getSyncLifecycle(
   }),
   options
 );
-
 export const bedTypeLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
     name: "bed-type",

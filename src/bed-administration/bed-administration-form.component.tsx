@@ -36,7 +36,6 @@ const numberInString = z.string().transform((val, ctx) => {
   }
   return val;
 });
-
 const BedAdministrationSchema = z.object({
   bedId: z.string().min(5).max(255),
   description: z.string().max(255),
