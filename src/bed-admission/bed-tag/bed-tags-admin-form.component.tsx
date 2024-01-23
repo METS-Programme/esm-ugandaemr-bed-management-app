@@ -19,7 +19,21 @@ import { Location } from "@openmrs/esm-framework";
 import type { BedTagData } from "../../types";
 
 const BedTagAdministrationSchema = z.object({
-  name: z.string().max(255),
+  name: z
+    .string()
+    .max(255)
+    .refine(
+      (value) => {
+        return (
+          typeof value === "string" &&
+          value.trim().length > 0 &&
+          !/\d/.test(value)
+        );
+      },
+      {
+        message: "Bed tag name must not contain numbers",
+      }
+    ),
 });
 
 interface BedTagAdministrationFormProps {
@@ -88,6 +102,7 @@ const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
               <Controller
                 name="name"
                 control={control}
+                rules={{ required: true }}
                 render={({ field, fieldState }) => (
                   <>
                     <TextInput
