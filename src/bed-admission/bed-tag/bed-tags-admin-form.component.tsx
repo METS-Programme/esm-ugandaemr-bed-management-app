@@ -31,7 +31,7 @@ const BedTagAdministrationSchema = z.object({
         );
       },
       {
-        message: "Bed tag name must not contain numbers",
+        message: "Bed tag must not contain numbers",
       }
     ),
 });
