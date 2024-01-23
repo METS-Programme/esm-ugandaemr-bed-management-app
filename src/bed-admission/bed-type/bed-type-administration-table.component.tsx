@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -18,7 +18,6 @@ import {
 import { Add, Edit } from "@carbon/react/icons";
 import {
   isDesktop as desktopLayout,
-  useConfig,
   useLayoutType,
 } from "@openmrs/esm-framework";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
@@ -37,14 +36,12 @@ const BedTypeAdministrationTable: React.FC = () => {
   const responsiveSize = isTablet ? "lg" : "sm";
   const isDesktop = desktopLayout(layout);
   const [showEditBedModal, setShowEditBedModal] = useState(false);
-  const [isBedDataLoading, setIsBedDataLoading] = useState(false);
+  const [isBedDataLoading] = useState(false);
   const [showBedTypeModal, setAddBedTypeModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editData, setEditData] = useState<BedTypeData>();
   const [pageSize] = useState(10);
   const { bedTypeData, isError, loading, validate, mutate } = useBedType();
-  const [currentPageSize, setPageSize] = useState(10);
-  const pageSizes = [10, 20, 30, 40, 50];
   const tableHeaders = [
     {
       header: t("name", "Name"),
@@ -209,7 +206,7 @@ const BedTypeAdministrationTable: React.FC = () => {
                 totalItems={bedTypeData.length}
                 onChange={({ page, pageSize }) => {
                   setCurrentPage(page);
-                  setPageSize(pageSize);
+                  pageSize(pageSize);
                 }}
               />
             </TableContainer>
