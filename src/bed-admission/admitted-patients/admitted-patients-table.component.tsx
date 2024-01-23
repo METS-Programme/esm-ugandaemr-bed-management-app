@@ -91,7 +91,7 @@ const AdmittedPatientsTable: React.FC<ActiveVisitsTableProps> = ({
       //   />
       // );
     },
-    [handleBedAssigmentModal, status]
+    [status]
   );
 
   const {
@@ -148,7 +148,7 @@ const AdmittedPatientsTable: React.FC<ActiveVisitsTableProps> = ({
         ),
       },
     }));
-  }, [paginatedQueueEntries, status, t, renderActionButton, fromPage]);
+  }, [paginatedQueueEntries]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;
