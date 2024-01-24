@@ -115,3 +115,10 @@
   opacity: 0.8;
   pointer-events: none;
 }
+
+.missingEncounter {
+  @include type.type-style('heading-compact-01');
+  color: $text-02;
+  margin-top: spacing.$spacing-05;
+  margin-bottom: spacing.$spacing-03;
+}

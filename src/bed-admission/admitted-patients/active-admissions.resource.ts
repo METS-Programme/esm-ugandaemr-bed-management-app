@@ -18,6 +18,10 @@ interface VisitResponse {
   totalCount: number;
 }
 
+// interface SQLBedAssignmentResponse {
+
+// }
+
 export interface BedPatientAssignment {
   patientUuid: string;
   age: number;
@@ -71,7 +75,7 @@ export function useActiveAdmissions() {
     ) {
       setSize((currentSize) => currentSize + 1);
     }
-  }, [data, pageNumber]);
+  }, [data, pageNumber, setSize]);
 
   const formattedActiveVisits: any = (data: FetchResponse<VisitResponse>) => {
     const result = data

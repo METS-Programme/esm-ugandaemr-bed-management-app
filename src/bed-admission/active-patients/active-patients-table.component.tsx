@@ -119,7 +119,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
       },
       {
         id: 1,
-        header: t("idNumber", "ID Number"),
+        header: t("idNumber", "Identifier"),
         key: "idNumber",
       },
       {
@@ -160,7 +160,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
         ),
       },
     }));
-  }, [paginatedQueueEntries, status, t, renderActionButton, fromPage]);
+  }, [paginatedQueueEntries, renderActionButton]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;

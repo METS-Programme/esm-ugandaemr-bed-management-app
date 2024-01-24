@@ -53,7 +53,7 @@ const BedLayoutList: React.FC<BedLayoutListProps> = React.memo(
       );
     }
 
-    if (locationUuid === undefined) {
+    if (locationUuid === "") {
       return (
         <div className={styles.errorContainer}>
           <EmptyState
@@ -63,7 +63,7 @@ const BedLayoutList: React.FC<BedLayoutListProps> = React.memo(
         </div>
       );
     }
-    if (locationUuid !== undefined && !bedData?.length) {
+    if (locationUuid !== "" && !bedData?.length) {
       return (
         <div className={styles.errorContainer}>
           <EmptyState

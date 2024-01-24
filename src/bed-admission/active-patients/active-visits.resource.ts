@@ -91,7 +91,7 @@ export function useActiveVisits() {
     ) {
       setSize((currentSize) => currentSize + 1);
     }
-  }, [data, pageNumber]);
+  }, [data, pageNumber, setSize]);
 
   const mapVisitProperties = (visit: Visit): ActiveVisit => {
     // create base object
