@@ -1,48 +1,30 @@
 import React, { useState } from "react";
 import { z } from "zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import styles from "../../bed-administration/bed-administration-table.scss";
 import {
   Button,
   ComposedModal,
-  Form,
-  FormGroup,
   ModalBody,
   ModalFooter,
   ModalHeader,
   Stack,
-  TextInput,
   InlineNotification,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import { Location } from "@openmrs/esm-framework";
-import type { BedTagData } from "../../types";
+interface BedTagData {
+  name: string;
+}
 
 const BedTagAdministrationSchema = z.object({
-  name: z
-    .string()
-    .max(255)
-    .refine(
-      (value) => {
-        return (
-          typeof value === "string" &&
-          value.trim().length > 0 &&
-          !/\d/.test(value)
-        );
-      },
-      {
-        message: "Bed tag must not contain numbers",
-      }
-    ),
+  name: z.string().max(255),
 });
 
 interface BedTagAdministrationFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
-  availableBedTypes: Array<BedTagData>;
-  allLocations: Location[];
-  handleCreateQuestion?: (formData: BedTagData) => void;
-  handleDeleteBedTag?: () => void;
+  handleDeleteBedTag?: (formData: BedTagData) => void;
   headerTitle: string;
   initialData: BedTagData;
 }
@@ -51,10 +33,10 @@ interface ErrorType {
   message: string;
 }
 
-const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
+const DeleteBedTagsForm: React.FC<BedTagAdministrationFormProps> = ({
   showModal,
   onModalChange,
-  handleCreateQuestion,
+  handleDeleteBedTag,
   headerTitle,
   initialData,
 }) => {
@@ -63,11 +45,7 @@ const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
   const [showErrorNotification, setShowErrorNotification] = useState(false);
   const [formStateError, setFormStateError] = useState("");
 
-  const {
-    handleSubmit,
-    control,
-    formState: { isDirty },
-  } = useForm<BedTagData>({
+  const { handleSubmit } = useForm<BedTagData>({
     mode: "all",
     resolver: zodResolver(BedTagAdministrationSchema),
     defaultValues: {
@@ -79,7 +57,9 @@ const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
     const result = BedTagAdministrationSchema.safeParse(formData);
     if (result.success) {
       setShowErrorNotification(false);
-      handleCreateQuestion(formData);
+      if (handleDeleteBedTag) {
+        handleDeleteBedTag(formData);
+      }
     }
   };
 
@@ -95,28 +75,10 @@ const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
       preventCloseOnClickOutside
     >
       <ModalHeader title={headerTitle} />
-      <Form onSubmit={handleSubmit(onSubmit, onError)}>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
         <ModalBody hasScrollingContent>
           <Stack gap={3}>
-            <FormGroup legendText={""}>
-              <Controller
-                name="name"
-                control={control}
-                rules={{ required: true }}
-                render={({ field, fieldState }) => (
-                  <>
-                    <TextInput
-                      id="bedTag"
-                      labelText={t("bedTag", "Bed Tag Name")}
-                      placeholder={t("bedTagPlaceholder", "")}
-                      invalidText={fieldState.error?.message}
-                      {...field}
-                    />
-                  </>
-                )}
-              />
-            </FormGroup>
-
+            <ModalBody>Are you sure you want to delete this bed tag?</ModalBody>
             {showErrorNotification && (
               <InlineNotification
                 lowContrast
@@ -134,13 +96,13 @@ const BedTagsAdministrationForm: React.FC<BedTagAdministrationFormProps> = ({
           <Button onClick={() => onModalChange(false)} kind="secondary">
             {t("cancel", "Cancel")}
           </Button>
-          <Button disabled={!isDirty} type="submit">
-            <span>{t("save", "Save")}</span>
+          <Button type="submit" className={styles.deleteButton}>
+            <span>{t("delete", "Delete")}</span>
           </Button>
         </ModalFooter>
-      </Form>
+      </form>
     </ComposedModal>
   );
 };
 
-export default BedTagsAdministrationForm;
+export default DeleteBedTagsForm;
