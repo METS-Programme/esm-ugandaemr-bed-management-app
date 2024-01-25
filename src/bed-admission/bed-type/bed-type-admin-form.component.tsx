@@ -20,11 +20,38 @@ import { Location } from "@openmrs/esm-framework";
 import type { BedType, BedTypeData } from "../../types";
 
 const BedTypeAdministrationSchema = z.object({
-  name: z.string().max(255),
-  displayName: z.string().max(255),
+  name: z
+    .string()
+    .max(255)
+    .refine(
+      (value) => {
+        return (
+          typeof value === "string" &&
+          value.trim().length > 0 &&
+          !/\d/.test(value)
+        );
+      },
+      {
+        message: "Bed Name must be a non-empty string without numbers",
+      }
+    ),
+  displayName: z
+    .string()
+    .max(255)
+    .refine(
+      (value) => {
+        return (
+          typeof value === "string" &&
+          value.trim().length > 0 &&
+          !/\d/.test(value)
+        );
+      },
+      {
+        message: "Display name must be a non-empty string without numbers",
+      }
+    ),
   description: z.string().max(255),
 });
-
 interface BedAdministrationFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
@@ -92,6 +119,7 @@ const BedTypeAdministrationForm: React.FC<BedAdministrationFormProps> = ({
               <Controller
                 name="name"
                 control={control}
+                rules={{ required: true }}
                 render={({ field, fieldState }) => (
                   <>
                     <TextInput
@@ -109,6 +137,7 @@ const BedTypeAdministrationForm: React.FC<BedAdministrationFormProps> = ({
               <Controller
                 name="displayName"
                 control={control}
+                rules={{ required: true }}
                 render={({ field, fieldState }) => (
                   <>
                     <TextInput
@@ -126,6 +155,7 @@ const BedTypeAdministrationForm: React.FC<BedAdministrationFormProps> = ({
               <Controller
                 name="description"
                 control={control}
+                rules={{ required: true }}
                 render={({ field, fieldState }) => (
                   <>
                     <TextArea

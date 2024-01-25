@@ -15,18 +15,21 @@ import {
   TableRow,
   Tile,
 } from "@carbon/react";
-import { Add, Edit } from "@carbon/react/icons";
+import { Add, Edit, Delete } from "@carbon/react/icons";
 import {
   isDesktop as desktopLayout,
+  showNotification,
+  showToast,
   useLayoutType,
 } from "@openmrs/esm-framework";
 import { CardHeader, ErrorState } from "@openmrs/esm-patient-common-lib";
 import type { BedTagData } from "../../types";
-import { useBedTag } from "../../summary/summary.resource";
+import { deleteBedTag, useBedTag } from "../../summary/summary.resource";
 import Header from "../../header/header.component";
 import styles from "../../bed-administration/bed-administration-table.scss";
 import BedTagForm from "./new-tag-form.component";
 import EditBedTagForm from "./edit-tag-form.component";
+import DeleteBedTag from "./delete-bed-tag.component";
 
 const BedTagAdministrationTable: React.FC = () => {
   const { t } = useTranslation();
@@ -37,14 +40,12 @@ const BedTagAdministrationTable: React.FC = () => {
   const isDesktop = desktopLayout(layout);
   const [isBedDataLoading] = useState(false);
   const [showBedTagsModal, setAddBedTagsModal] = useState(false);
+  const [showDeleteBedTagsModal, setDeleteBedTagsModal] = useState(false);
   const [showEditBedModal, setShowEditBedModal] = useState(false);
   const [editData, setEditData] = useState<BedTagData>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const { bedTypeData, isError, loading, validate, mutate } = useBedTag();
-  const [currentPageSize, setPageSize] = useState(10);
-  const pageSizes = [10, 20, 30, 40, 50];
-
   const tableHeaders = [
     {
       header: t("ids", "Id"),
@@ -59,7 +60,6 @@ const BedTagAdministrationTable: React.FC = () => {
       key: "actions",
     },
   ];
-
   const tableRows = useMemo(() => {
     return bedTypeData?.map((entry) => ({
       id: entry.uuid,
@@ -75,9 +75,26 @@ const BedTagAdministrationTable: React.FC = () => {
               setEditData(entry);
               setShowEditBedModal(true);
               setAddBedTagsModal(false);
+              setDeleteBedTagsModal(false);
             }}
             kind={"ghost"}
             iconDescription={t("editBedTag", "Edit Bed Tag")}
+            hasIconOnly
+            size={responsiveSize}
+            tooltipAlignment="start"
+          />
+          <Button
+            enterDelayMs={300}
+            renderIcon={Delete}
+            onClick={(e) => {
+              e.preventDefault();
+              setEditData(entry);
+              setShowEditBedModal(false);
+              setAddBedTagsModal(false);
+              setDeleteBedTagsModal(true);
+            }}
+            kind={"ghost"}
+            iconDescription={t("deleteBedTag", "Delete Bed Tag")}
             hasIconOnly
             size={responsiveSize}
             tooltipAlignment="start"
@@ -97,7 +114,6 @@ const BedTagAdministrationTable: React.FC = () => {
       </>
     );
   }
-
   if (isError) {
     return (
       <>
@@ -108,7 +124,6 @@ const BedTagAdministrationTable: React.FC = () => {
       </>
     );
   }
-
   return (
     <>
       <Header route="Bed Tag" />
@@ -125,6 +140,14 @@ const BedTagAdministrationTable: React.FC = () => {
           <EditBedTagForm
             onModalChange={setShowEditBedModal}
             showModal={showEditBedModal}
+            editData={editData}
+            mutate={mutate}
+          />
+        ) : null}
+        {showDeleteBedTagsModal ? (
+          <DeleteBedTag
+            onModalChange={setDeleteBedTagsModal}
+            showModal={showDeleteBedTagsModal}
             editData={editData}
             mutate={mutate}
           />
@@ -204,7 +227,7 @@ const BedTagAdministrationTable: React.FC = () => {
                 totalItems={bedTypeData.length}
                 onChange={({ page, pageSize }) => {
                   setCurrentPage(page);
-                  setPageSize(pageSize);
+                  pageSize(pageSize);
                 }}
               />
             </TableContainer>

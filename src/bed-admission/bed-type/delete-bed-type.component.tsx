@@ -1,48 +1,40 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { showToast, showNotification } from "@openmrs/esm-framework";
-
-import { editBedTag, useBedTag } from "../../summary/summary.resource";
+import { deleteBedType } from "../../summary/summary.resource";
 import { BedTagDataAdministration } from "../../bed-administration/bed-administration-types";
-import BedTagsAdministrationForm from "./bed-tags-admin-form.component";
 import { BedTagData, Mutator } from "../../types";
+import DeleteBedTypesForm from "./deleteBedtypeForm.component";
 
-interface EditBedTagFormProps {
+interface DeleteBedTypeFormProps {
   showModal: boolean;
   onModalChange: (showModal: boolean) => void;
   editData: BedTagData;
   mutate: Mutator;
 }
 
-const EditBedTagForm: React.FC<EditBedTagFormProps> = ({
+const DeleteBedType: React.FC<DeleteBedTypeFormProps> = ({
   showModal,
   onModalChange,
   editData,
   mutate,
 }) => {
   const { t } = useTranslation();
-
-  const headerTitle = t("editBed", "Edit Tag");
-  const { bedTypeData } = useBedTag();
-  const availableBedTypes = bedTypeData ? bedTypeData : [];
-
-  const handleCreateQuestion = useCallback(
+  const headerTitle = t("deleteBedType", "Delete bed Type");
+  const handleDeleteQuestion = useCallback(
     (formData: BedTagDataAdministration) => {
       const bedUuid = editData.uuid;
       const { name } = formData;
-      const bedPayload = {
-        name,
-      };
-      editBedTag({ bedPayload, bedTagId: bedUuid })
+      deleteBedType(bedUuid)
         .then(() => {
           showToast({
-            title: t("formSaved", "Bed Tag"),
+            title: t("bedTypeDeleted", "Bed Type Deleted"),
             kind: "success",
             critical: true,
             description:
-              bedPayload.name +
+              name +
               " " +
-              t("saveSuccessMessage", "was saved successfully."),
+              t("bedTypeDeleteSuccessMessage", "was deleted successfully."),
           });
 
           mutate();
@@ -50,7 +42,7 @@ const EditBedTagForm: React.FC<EditBedTagFormProps> = ({
         })
         .catch((error) => {
           showNotification({
-            title: t("errorCreatingForm", "Error creating bed"),
+            title: t("errorDeletingBedType", "Error deleting bed type"),
             kind: "error",
             critical: true,
             description: error?.message,
@@ -61,20 +53,17 @@ const EditBedTagForm: React.FC<EditBedTagFormProps> = ({
     },
     [onModalChange, mutate, editData, t]
   );
-
   return (
     <>
-      <BedTagsAdministrationForm
+      <DeleteBedTypesForm
         onModalChange={onModalChange}
-        availableBedTypes={availableBedTypes}
         showModal={showModal}
-        handleCreateQuestion={handleCreateQuestion}
+        handleDeleteBedTag={handleDeleteQuestion}
         headerTitle={headerTitle}
         initialData={editData}
-        allLocations={[]}
       />
     </>
   );
 };
 
-export default EditBedTagForm;
+export default DeleteBedType;
