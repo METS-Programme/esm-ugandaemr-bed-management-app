@@ -6,6 +6,7 @@ import {
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
 import { createDashboardLink } from "./bed-admission/createDashboardLink";
+import bedManagementAppMenu from "./bed-manangement-menu-app-item/bed-manangement-menu-app-item.component";
 
 const moduleName = "@ugandaemr/esm-bed-management-app";
 
@@ -20,6 +21,8 @@ export const importTranslation = require.context(
   /.json$/,
   "lazy"
 );
+
+export const bedManagementAppMenuItem = getSyncLifecycle(bedManagementAppMenu, options);
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
