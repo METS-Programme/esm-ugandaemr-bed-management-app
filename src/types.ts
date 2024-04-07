@@ -152,3 +152,14 @@ export interface BedDetails extends Bed {
     identifiers: Array<{ identifier: string }>;
   };
 }
+export interface BedTypeData {
+  uuid: string;
+  name: string;
+  displayName: string;
+  description: string;
+}
+
+export interface BedTagData {
+  uuid: string;
+  name: string;
+}

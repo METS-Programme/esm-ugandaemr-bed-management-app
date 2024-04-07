@@ -42,9 +42,6 @@ const BedTagAdministrationTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const { bedTypeData, isError, loading, validate, mutate } = useBedTag();
-  const [currentPageSize, setPageSize] = useState(10);
-  const pageSizes = [10, 20, 30, 40, 50];
-
   const tableHeaders = [
     {
       header: t("ids", "Id"),
@@ -204,7 +201,7 @@ const BedTagAdministrationTable: React.FC = () => {
                 totalItems={bedTypeData.length}
                 onChange={({ page, pageSize }) => {
                   setCurrentPage(page);
-                  setPageSize(pageSize);
+                  pageSize(pageSize);
                 }}
               />
             </TableContainer>
