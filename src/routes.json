@@ -28,6 +28,11 @@
       "order": 0
     },
     {
+      "component": "wardLeftPanelLink",
+      "name": "ward-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
+    {
       "component": "bedAdmission",
       "name": "bed-admission-dashboard",
       "slot": "bed-admission-dashboard-slot"

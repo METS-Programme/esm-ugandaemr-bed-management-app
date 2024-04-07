@@ -8,6 +8,7 @@ import WardWithBeds from "./ward-with-beds/ward-with-beds.component";
 import styles from "./root.scss";
 import BedTagAdministrationTable from "./bed-admission/bed-tag/bed-tag-administration-table.component";
 import BedTypeAdministrationTable from "./bed-admission/bed-type/bed-type-administration-table.component";
+import WardAdministrationTable from "./bed-admission/ward/ward-administration-table.component";
 
 const Root: React.FC = () => {
   const spaBasePath = window.spaBase;
@@ -27,6 +28,7 @@ const Root: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/location/:location" element={<WardWithBeds />} />
+          <Route path="/ward" element={<WardAdministrationTable />} />
           <Route path="/administration" element={<BedAdministrationTable />} />
           <Route path="/bed-tag" element={<BedTagAdministrationTable />} />
           <Route path="/bed-type" element={<BedTypeAdministrationTable />} />

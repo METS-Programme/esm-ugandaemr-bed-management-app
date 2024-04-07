@@ -161,3 +161,15 @@ export interface BedTagData {
   uuid: string;
   name: string;
 }
+export interface WardData {
+  uuid: string;
+  name: string;
+}
+export interface LocationTagData {
+  uuid: string;
+  name: string;
+  tagLocation: {
+    display: string;
+    uuid: string;
+  };
+}

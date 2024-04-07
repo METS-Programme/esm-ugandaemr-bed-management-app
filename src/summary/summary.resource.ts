@@ -181,9 +181,12 @@ export async function saveBedType({
   }
 }
 
+interface WardName {
+  name: string;
+}
 export async function saveBedTag({
   bedPayload,
-}): Promise<FetchResponse<BedTag>> {
+}): Promise<FetchResponse<WardName>> {
   try {
     const response: FetchResponse = await openmrsFetch(`/ws/rest/v1/bedTag/`, {
       method: "POST",
@@ -307,6 +310,63 @@ export async function deleteBedType(
     } else {
       throw new Error(`Failed to delete bed tag. Status: ${response.status}`);
     }
+  } catch (error) {
+    const errorMessages = extractErrorMessagesFromResponse(error);
+    showToast({
+      description: errorMessages.join(", "),
+      title: "Error on saving form",
+      kind: "error",
+      critical: true,
+    });
+  }
+}
+
+export const useWard = () => {
+  const url = `ws/rest/v1/location/`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(url, openmrsFetch);
+  const results = data?.data?.results ? data?.data?.results : [];
+
+  return {
+    wardList: results,
+    isError: error,
+    loading: isLoading,
+    validate: isValidating,
+    mutate,
+  };
+};
+export const useLocationTags = () => {
+  const url = `ws/rest/v1/locationtag`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    { data },
+    Error
+  >(url, openmrsFetch);
+  const results = data?.data?.results ? data?.data?.results : [];
+
+  return {
+    tagList: results,
+    tagError: error,
+    tagLoading: isLoading,
+    tagValidate: isValidating,
+    tagMutate: mutate,
+  };
+};
+
+export async function saveWard({
+  wardPayload,
+}): Promise<FetchResponse<BedTag>> {
+  try {
+    const response: FetchResponse = await openmrsFetch(
+      `/ws/rest/v1/location/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: wardPayload,
+      }
+    );
+    return response;
   } catch (error) {
     const errorMessages = extractErrorMessagesFromResponse(error);
     showToast({
